@@ -3,7 +3,7 @@
 Parameters for electron-phonon.scattering
 """
 import constants as C
-#import numpy as np
+import numpy as np
 
 
 # material spicific
@@ -12,20 +12,22 @@ mh = 0.015 * C.me
 mu = 1/(1/me + 1/mh)
 eps = 12  # dielectric constant
 dipole = 0.5 * C.e
-Eg = 2 # gap energy
+Eg = 0 # gap energy
 damp = 1 # damping of the polaization
 
+# interraction constant
+c = C.e**2/((2*np.pi)**3 * 2 * C.eps0 * eps) 
 
 # eletric pulse
 E0 = 1e-07  # field strength
-texp = 0.05
+texp = 0.1
 FWHM = 0.015
 
 
 # grids
 k0 = 0.
 k1 = 2.
-nk = 50
+nk = 100
 
 
 
