@@ -12,14 +12,15 @@ mh = 0.015 * C.me
 mu = 1/(1/me + 1/mh)
 eps = 12  # dielectric constant
 dipole = 0.5 * C.e
-Eg = 0 # gap energy
-damp = 1 # damping of the polaization
+Eg = 2500 # gap energy
+damp = 0 # damping of the polaization
 
 # interraction constant
 c = C.e**2/((2*np.pi)**3 * 2 * C.eps0 * eps) 
 
 # eletric pulse
 E0 = 1e-07  # field strength
+w0 = 2500
 texp = 0.1
 FWHM = 0.015
 

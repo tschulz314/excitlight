@@ -13,14 +13,21 @@ import matplotlib.pyplot as plt
 import parameters as P
 
 
-def read_data():
-    t = np.loadtxt("solutions/time")
-    k = np.loadtxt("solutions/momentum")
-    sol = np.loadtxt("solutions/sol").view(complex) #, dtype=np.complex_
-    pol = np.loadtxt("solutions/pol").view(complex)
-    return t, k, sol, pol
-t, k, sol, pol = read_data()
+# def read_data():
+#     t = np.loadtxt("solutions/time")
+#     k = np.loadtxt("solutions/momentum")
+#     sol = np.loadtxt("solutions/sol").view(complex) #, dtype=np.complex_
+#     polt = np.loadtxt("solutions/polt").view(complex)
+#     return t, k, sol, polt
+# t, k, sol, polt = read_data()
 
+t = np.loadtxt("solutions/time")
+k = np.loadtxt("solutions/momentum")
+sol = np.loadtxt("solutions/sol").view(complex) 
+polt = np.loadtxt("solutions/polt").view(complex)
+w = np.loadtxt("solutions/frequency")
+polw = np.loadtxt("solutions/polw").view(complex)
+Ew = np.loadtxt("solutions/Ew").view(complex)
 
 def time_evo():
     T = len(t)-1
@@ -68,13 +75,13 @@ def psit():
     ax2.grid()
     ax3.grid()
     plt.show()
-psit() 
+#psit() 
 
 
-def pol_evo():
+def polt_evo():
     fig, (ax1, ax2, ax3) = plt.subplots(3, 1, sharex=True, dpi=300) 
-    ax1.plot(t, pol[:].real, '-')
-    ax2.plot(t, pol[:].imag, '-')
+    ax1.plot(t, polt[:].real, '-')
+    ax2.plot(t, polt[:].imag, '-')
     ax3.plot(t, Efield(t))  
     #ax3.set_ylim(0, 100)
     ax3.set_xlabel(r"$t$ in ps")
@@ -82,9 +89,66 @@ def pol_evo():
     ax1.set_ylabel(r"$Re(P)$")
     ax2.set_ylabel(r"$Im(P)$")
     ax3.set_ylabel(r"$E$")
-    ax2.legend(loc="right") 
+    #ax2.legend(loc="right") 
     ax1.grid()
     ax2.grid()
     ax3.grid()
     plt.show()
-pol_evo() 
+#polt_evo() 
+
+
+def polw_evo():
+    fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True, dpi=300) 
+    ax1.plot(w, polw.real, '-')
+    ax2.plot(w, polw.imag, '-')
+    ax2.set_xlabel(r"$\omega$ in ps$^{-1}$")
+    #ax3.set_xlim(0, 0.1)
+    ax1.set_ylabel(r"$Re(P)$")
+    ax2.set_ylabel(r"$Im(P)$")
+    #ax2.legend(loc="right") 
+    ax1.grid()
+    ax2.grid()
+    plt.show()
+#polw_evo() 
+
+
+
+def chiw_evo():
+    fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True, dpi=300) 
+    chi = polw / Ew 
+    ax1.plot(w, Ew.real, '-')
+    ax2.plot(w, chi.imag, '-')
+    ax2.set_xlabel(r"$\omega$ in ps$^{-1}$")
+    #ax2.set_xlim(2200, 2800)
+    ax2.set_ylim(-1e10, 1e10)
+    ax1.set_ylabel(r"$Re(\chi)$")
+    ax2.set_ylabel(r"$Im(\chi)$")
+    #ax2.legend(loc="right") 
+    ax1.grid()
+    ax2.grid()
+    plt.show()
+#chiw_evo() 
+
+
+def allw_evo():
+    fig, (ax1, ax2, ax3) = plt.subplots(3, 1, sharex=True, dpi=300) 
+    #plt.tight_layout()
+    chi = polw / Ew 
+    ax1.plot(w, polw.real, '-')
+    ax1.plot(w, polw.imag, '-')
+    ax2.plot(w, Ew.real, '-')
+    ax2.plot(w, Ew.imag, '-')
+    ax3.plot(w, chi.real, '-')
+    ax3.plot(w, chi.imag, '-')
+    ax3.set_xlabel(r"$\omega$ in ps$^{-1}$")
+    #ax2.set_xlim(2200, 2800)
+    ax3.set_ylim(-1e10, 1e10)
+    ax1.set_ylabel(r"$P(\omega)$")
+    ax2.set_ylabel(r"$E(\omega)$")
+    ax3.set_ylabel(r"$\chi(\omega)$")
+    #ax2.set_ylabel(r"$Im(\chi)$")
+    #ax2.legend(loc="right") 
+    ax1.grid()
+    ax2.grid()
+    plt.show()
+allw_evo()    
