@@ -7,40 +7,38 @@ import numpy as np
 
 
 # material spicific
-me = 0.067 * C.me 
-mh = 0.015 * C.me
+me = 0.067 * C.me #0.067
+mh = 0.15 * C.me
 mu = 1/(1/me + 1/mh)
 eps = 12  # dielectric constant
 dipole = 0.5 * C.e
 Eg = 2500 # gap energy
-damp = 0 # damping of the polaization
+damp = C.hbar*1 # damping of the polaization
 
-# interraction constant
+
+# interraction 
 c = C.e**2/((2*np.pi)**3 * 2 * C.eps0 * eps) 
 
-# eletric pulse
+
+# eletric field 
 E0 = 1e-07  # field strength
-w0 = 2500
-texp = 0.1
-FWHM = 0.015
+w0 = 2500 / C.hbar
+texp = 1
+FWHM = 0.05 #0.06
+Phi = C.hbar*w0 - Eg
 
 
 # grids
 k0 = 0.
-k1 = 2.
-nk = 100
-
+k1 = 1
+nk = 400
 
 
 # ODE conditions
 t0          = 0.
-t1          = .2
-nt          = 4000
-#dt          = (t1-t0)/nt
-#dens_start  = 1e12 # cm^-2
-#n = dens_start * 1E-14 # nm^-2
-#temp        = 300.
-#beta        = (C.kb * temp)**-1
+t1          = 10
+nt          = 5000 
+tres = nt/(t1-t0) # 1 Stützstelle per ps
 
 # general
 debug = True
