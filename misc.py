@@ -46,8 +46,26 @@ def fourier_trafo(x, fx, y0, y1, ny, inverse=False):
     x = grid[0]
     for ii in range(ny):
         func = lambda xx: 1/np.sqrt(2*np.pi) * f(xx) * np.exp(-1j*y[ii]*xx) 
-        #if inverse is True:
-        #    func = lambda x: 1/np.sqrt(2*np.pi) * f(x) * np.exp(1j*y[ii]*x) 
+        if inverse is True:
+            func = lambda x: 1/np.sqrt(2*np.pi) * f(x) * np.exp(1j*y[ii]*x) 
+        gy[ii] = Integration.integrater.int_disc(func(x), grid) 
+    #print(x[0], x[-1], len(x))    
+    return y, gy
+
+
+def fourier_trafo2(x, fx, y, inverse=False):
+    f = interpolate.interp1d(x, fx)
+    #plt.plot(x, f(x))
+    #plt.show()
+    #plt.close()
+    #y = np.linspace(y0, y1, ny)
+    gy = np.zeros(len(y), dtype=np.complex_)
+    grid = Integration.grids.equi(x[0], x[-1], len(x))
+    x = grid[0]
+    for ii in range(len(y)):
+        func = lambda xx: 1/np.sqrt(2*np.pi) * f(xx) * np.exp(-1j*y[ii]*xx) 
+        if inverse is True:
+            func = lambda x: 1/np.sqrt(2*np.pi) * f(x) * np.exp(1j*y[ii]*x) 
         gy[ii] = Integration.integrater.int_disc(func(x), grid) 
     #print(x[0], x[-1], len(x))    
     return y, gy

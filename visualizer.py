@@ -15,22 +15,22 @@ import misc as misc
 
 
 
-t = np.loadtxt("solutions/time")
-k = np.loadtxt("solutions/momentum")
-sol = np.loadtxt("solutions/sol").view(complex) 
+t = np.loadtxt("sol_t/time")
+k = np.loadtxt("sol_t/momentum")
+sol = np.loadtxt("sol_t/sol").view(complex) 
 #sol = sol*np.exp(- 1j * P.w0*t.reshape((len(t), 1)) )
-polt = np.loadtxt("solutions/polt").view(complex)
-w = np.loadtxt("solutions/frequency")
-polw = np.loadtxt("solutions/polw").view(complex)
-#Ew = np.loadtxt("solutions/Ew").view(complex)
+polt = np.loadtxt("sol_t/polt").view(complex)
+w = np.loadtxt("sol_t/frequency")
+polw = np.loadtxt("sol_t/polw").view(complex)
+#Ew = np.loadtxt("sol_t/Ew").view(complex)
 Ew = misc.E0w(w)
 
 def psi_over_k():
     T = len(t)-1
-    t_ind = [0, int(T/100), int(T/10), int(T/5), int(T/2), int(T)]
-    t_ind = [int(T/3)]
-    fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True) 
-    #plt.figure() #figsize=(7, 7) dpi=300
+    #t_ind = [0, int(T/100), int(T/10), int(T/5), int(T/2), int(T)]
+    t_ind = [int(T/10)] #int(T/10), int(T/5), 
+    fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True, dpi=300) 
+    #plt.figure() #figsize=(7, 7) 
     for index in t_ind:
         ax1.plot(k, sol[index, :].real, '-', label=r"$t={}\,$ps".format(t[index]))
         ax2.plot(k, sol[index, :].imag, '-', label=r"$t={}\,$ps".format(t[index]))
@@ -45,7 +45,7 @@ def psi_over_k():
     #plt.savefig("fig/fk_" + branch + '.png', dpi=300)
     #plt.savefig("fig/fk_0.png", dpi=300)
     plt.show()
-psi_over_k() 
+#psi_over_k() 
 
 
 def find_nearest(array, value):
@@ -55,6 +55,9 @@ def find_nearest(array, value):
 
 
 def spicific_psik(ktoplot):
+    plt.plot(t, sol[:, 0].real)
+    plt.show()
+    plt.close()
     fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True, dpi=300) 
     plt.tight_layout()
     kind = find_nearest(k, ktoplot)
@@ -70,7 +73,7 @@ def spicific_psik(ktoplot):
     ax1.grid()
     ax2.grid()
     plt.show()
-#spicific_psik(0.2) 
+#spicific_psik(0) 
 #spicific_psik(0.4) 
 #spicific_psik(1) 
 
@@ -172,14 +175,14 @@ def chi_over_w():
     ax1.plot(w, chi.real, '-')
     ax2.plot(w, chi.imag, '-')
     ax2.set_xlabel(r"$\omega$ in ps$^{-1}$")
-    #ax2.set_xlim(2200, 2800)
+    ax2.set_xlim(-50, 50)
     ax1.set_ylabel(r"$Re(\chi)$")
     ax2.set_ylabel(r"$Im(\chi)$")
     #ax2.legend(loc="right") 
     ax1.grid()
     ax2.grid()
     plt.show()
-#chi_over_w() 
+chi_over_w() 
 
 
 def allw_evo():
@@ -194,7 +197,7 @@ def allw_evo():
     ax3.plot(w, chi.imag, '-')
     #ax3.set_xlim(0, 100)
     ax3.set_xlabel(r"$\omega$ in ps$^{-1}$")
-    ax3.set_xlim(-100, 100)
+    #ax3.set_xlim(-100, 100)
     #ax3.set_ylim(-1e2, 1e2)
     ax1.set_ylabel(r"$P(\omega)$")
     ax2.set_ylabel(r"$E(\omega)$")
