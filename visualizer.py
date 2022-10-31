@@ -28,7 +28,7 @@ Ew = misc.E0w(w)
 def psi_over_k():
     T = len(t)-1
     #t_ind = [0, int(T/100), int(T/10), int(T/5), int(T/2), int(T)]
-    t_ind = [int(T/10)] #int(T/10), int(T/5), 
+    t_ind = [int(T/2)] #int(T/10), int(T/5), 
     fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True, dpi=300) 
     #plt.figure() #figsize=(7, 7) 
     for index in t_ind:
@@ -45,7 +45,7 @@ def psi_over_k():
     #plt.savefig("fig/fk_" + branch + '.png', dpi=300)
     #plt.savefig("fig/fk_0.png", dpi=300)
     plt.show()
-#psi_over_k() 
+psi_over_k() 
 
 
 def find_nearest(array, value):
@@ -182,7 +182,7 @@ def chi_over_w():
     ax1.grid()
     ax2.grid()
     plt.show()
-chi_over_w() 
+#chi_over_w() 
 
 
 def allw_evo():

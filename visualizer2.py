@@ -11,7 +11,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 #import parameters as P
-#import misc as misc
+import misc as misc
 
 
 
@@ -37,10 +37,10 @@ def comp_psi_over_k(tval):
     index2 = find_nearest(t2, tval)
     # plot
     fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True, dpi=300) 
-    #ax1.plot(k1, psit1[index1, :].real, '-', label=r"$t={}\,$ps".format(t1[index1]))
+    ax1.plot(k1, psit1[index1, :].real, '-', label=r"$t={}\,$ps".format(t1[index1]))
     #ax1.plot(k1, psit1[index1, :].real, 'x', label=r"$t={}\,$ps".format(t1[index1]))
     ax1.plot(k2, psit2[index2, :].real, '--', label=r"$t={}\,$ps".format(t2[index2]))
-    #ax2.plot(k1, psit1[index1, :].imag, '-', label=r"$t={}\,$ps".format(t1[index1]))
+    ax2.plot(k1, psit1[index1, :].imag, '-', label=r"$t={}\,$ps".format(t1[index1]))
     #ax2.plot(k1, psit1[index1, :].imag, 'x', label=r"$t={}\,$ps".format(t1[index1]))
     ax2.plot(k2, psit2[index2, :].imag, '--', label=r"$t={}\,$ps".format(t2[index2]))
     ax1.set_xlabel(r"$k$ in nm$^{-1}$")
@@ -57,5 +57,27 @@ def comp_psi_over_k(tval):
     plt.show()
 comp_psi_over_k(5) 
 
+
+
+def comp_chi():
+    Pw1 = np.loadtxt("sol_t/polw").view(complex)
+    w1 = np.loadtxt("sol_t/frequency")
+    chiw1 = Pw1 / misc.E0w(w1)
+    w2 = np.loadtxt("sol_w/freq")
+    chiw2 = np.loadtxt("sol_w/chi").view(complex)
+    fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True, dpi=300) 
+    ax1.plot(w1, chiw1[:].real)
+    ax1.plot(w2, chiw2[:].real, '--')
+    ax2.plot(w1, chiw1[:].imag)
+    ax2.plot(w2, chiw2[:].imag, '--')
+    ax2.set_xlabel(r"$\omega$ in ps$^{-1}$")
+    #ax2.set_xlim(-50, 50)
+    ax1.set_ylabel(r"$Re(\chi)$")
+    ax2.set_ylabel(r"$Im(\chi)$")
+    #ax2.legend(loc="right") 
+    ax1.grid()
+    ax2.grid()
+    plt.show()
+comp_chi()
 
   

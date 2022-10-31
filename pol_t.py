@@ -30,12 +30,12 @@ st = time.time()
     
 ### initial conditions
 
-k = Integration.grids.gts2(P.k0, P.k1, P.nk)[0]
+#grid = Integration.grids.equi(P.k0, P.k1, P.nk)
+grid = Integration.grids.gts2(P.k0, P.k1, P.nk)
+k = grid[0]
 epsk = C.hbar**2 * k**2 / (2*P.mu)
 psik0 = np.zeros(len(k), dtype=np.complex_)
 
-
-#plt.plot(k, k-k, 'x')
 
 ### calculate psi(t) (rotating frame)
     
@@ -54,7 +54,7 @@ def psiovertime():
     np.savetxt("sol_t/time", t)
     np.savetxt("sol_t/momentum", k)
     np.savetxt("sol_t/sol", sol.view(float))
-#psiovertime()
+psiovertime()
 
 
 
@@ -68,9 +68,9 @@ def polovertime():
     #print(integrand.shape)
     for ii in range(len(t)):
         pol[ii] = Integration.integrater.int_disc(
-            integrand[ii, :], Integration.grids.gts2(P.k0, P.k1, P.nk))
+            integrand[ii, :], grid)
     np.savetxt("sol_t/polt", pol.view(float))
-#polovertime()
+polovertime()
 
 
 
@@ -79,7 +79,7 @@ def polovertime():
 def poloverfreq():
     polt = np.loadtxt("sol_t/polt").view(complex)
     t = np.loadtxt("sol_t/time")
-    nw = 8000
+    nw = 2000
     w0 = -100
     w1 = 100
     #w, Ew = misc.fourier_trafo(t, misc.E0(t), w0, w1, nw)#, inverse=True)

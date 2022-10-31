@@ -31,7 +31,7 @@ Phi = C.hbar*w0 - Eg
 # grids
 k0 = 0.
 k1 = 1.
-nk = 2000
+nk = 1500
 
 
 # ODE conditions
