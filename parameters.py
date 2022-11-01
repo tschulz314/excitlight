@@ -10,14 +10,16 @@ import numpy as np
 me = 0.067 * C.me #0.067
 mh = 0.15 * C.me
 mu = 1/(1/me + 1/mh)
+#mu = C.me
 eps = 12  # dielectric constant
+#eps = 1
 dipole = 0.5 * C.e
 Eg = 2500 # gap energy
 damp = C.hbar*1 # damping of the polaization
 
 
 # interraction 
-c = C.e**2/((2*np.pi)**3 * 2 * C.eps0 * eps) 
+cI = 1 / (2*np.pi)**2 * C.e**2/(C.eps0 * eps) 
 
 
 # eletric field 
@@ -31,18 +33,21 @@ Phi = C.hbar*w0 - Eg
 # grids
 k0 = 0.
 k1 = 1.
-nk = 1500
+nk = 2000 #2000
 
 
 # ODE conditions
 t0          = 0.
 t1          = 10
 nt          = 5000
+ntprint     = 100
 tres = nt/(t1-t0) # 1 Stützstelle per ps
 
 # general
 debug = True
 
+ryd = - mu * C.e**4 / (8*C.eps0**2*eps**2*C.hbar**2*4*np.pi**2)
+ryd_frq = ryd / C.hbar
 
 
 

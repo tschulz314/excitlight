@@ -137,3 +137,24 @@ def int_grid(k, N):
 #        return Dpsik
 #    return ode    
     
+
+
+
+
+def int_integral(psik):
+    I = np.zeros(len(k), dtype=np.complex_)
+    # calculate the modified grid w_(i, j)
+    w_ij = np.zeros((len(k), len(k)))
+    for ii in range(len(k)):  # loop over outer k grid
+        v_ij = grid[1] * k / k[ii] * np.log(np.abs(k+k[ii])/np.abs(k-k[ii])) # v_(i,j)
+        v_im = v_ij * 4 * k[ii]**4 / (k[ii]**2+k**2)**2 # v_(i, m) in sum for i = j
+        vsum = np.sum(v_im)
+        for jj in range(len(k)):
+            if ii == jj:
+                w_ij[ii, jj] = -vsum + v_im[ii] + np.pi*k[ii]  
+            else:
+                w_ij[ii, jj] = v_ij[jj]
+        I[ii] = np.sum(w_ij[ii, :]*psik) # sum over j       
+    #print(I)    
+    return I            
+#x = int_integral(1)

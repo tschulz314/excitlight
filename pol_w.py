@@ -62,7 +62,7 @@ def psi_over_t():
     np.savetxt("sol_w/momentum", k)
     np.savetxt("sol_w/psit", psit.view(float))    
     return t, psit
-t, psit = psi_over_t()
+#t, psit = psi_over_t()
 
 
 # plt.plot(t, psit[:, -1])
@@ -79,7 +79,7 @@ def chi_over_w():
     k_2D = k.reshape((1, len(k)))
     w_2D = w.reshape((len(w), 1))
     epsk = C.hbar**2 * k_2D**2 / (2*P.mu)
-    integrand = k_2D**2/(C.hbar*w_2D + epsk + P.Eg - C.hbar*P.w0 -1j*P.damp)
+    integrand = k_2D**2/(-C.hbar*w_2D + epsk + P.Eg - C.hbar*P.w0 -1j*P.damp)
     #integrand2 = epsk/((C.hbar*w_2D + epsk + P.Eg - C.hbar*P.w0)**2  + P.damp**2)
     for ii in range(len(w)):
         chiw[ii] = Integration.integrater.int_disc(integrand[ii, :], grid) 

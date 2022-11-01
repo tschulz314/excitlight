@@ -10,7 +10,9 @@ Created on Mon Apr 26 16:40:27 2021
 import numpy as np
 import matplotlib.pyplot as plt
 
-#import parameters as P
+
+import constants as C
+import parameters as P
 import misc as misc
 
 
@@ -23,12 +25,12 @@ polt = np.loadtxt("sol_t/polt").view(complex)
 w = np.loadtxt("sol_t/frequency")
 polw = np.loadtxt("sol_t/polw").view(complex)
 #Ew = np.loadtxt("sol_t/Ew").view(complex)
-Ew = misc.E0w(w)
+Ew = misc.E0w(-w)
 
 def psi_over_k():
     T = len(t)-1
     #t_ind = [0, int(T/100), int(T/10), int(T/5), int(T/2), int(T)]
-    t_ind = [int(T/2)] #int(T/10), int(T/5), 
+    t_ind = [int(T/100)] #int(T/10), int(T/5), 
     fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True, dpi=300) 
     #plt.figure() #figsize=(7, 7) 
     for index in t_ind:
@@ -45,7 +47,7 @@ def psi_over_k():
     #plt.savefig("fig/fk_" + branch + '.png', dpi=300)
     #plt.savefig("fig/fk_0.png", dpi=300)
     plt.show()
-psi_over_k() 
+#psi_over_k() 
 
 
 def find_nearest(array, value):
@@ -171,18 +173,19 @@ def polw_evo():
 
 def chi_over_w():
     fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True, dpi=300) 
-    chi = polw / Ew 
+    chi = polw / (Ew*C.eps0) 
     ax1.plot(w, chi.real, '-')
     ax2.plot(w, chi.imag, '-')
     ax2.set_xlabel(r"$\omega$ in ps$^{-1}$")
-    ax2.set_xlim(-50, 50)
+    #ax2.set_xlim(-50, 50)
+    #ax2.set_ylim(0, 100)
     ax1.set_ylabel(r"$Re(\chi)$")
     ax2.set_ylabel(r"$Im(\chi)$")
     #ax2.legend(loc="right") 
     ax1.grid()
     ax2.grid()
     plt.show()
-#chi_over_w() 
+#chi_over_w()     
 
 
 def allw_evo():
@@ -209,3 +212,19 @@ def allw_evo():
     ax3.grid()
     plt.show()
 #allw_evo()    
+    
+    
+def abs_over_w():
+    plt.figure() #dpi=300
+    chi = polw / (Ew*C.eps0) 
+    #plt.plot(w, chi.real, '-')
+    plt.plot(w, chi.imag, '-')
+    plt.xlabel(r"$\omega$ in ps$^{-1}$")
+    #ax2.set_xlim(-50, 50)
+    #plt.ylim(0, 0.025)
+    plt.axvline(P.ryd_frq, color='grey')
+    plt.ylabel(r"$Im(\chi)$")
+    #ax2.legend(loc="right") 
+    plt.grid()
+    plt.show()
+abs_over_w()     
