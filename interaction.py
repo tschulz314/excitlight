@@ -158,3 +158,61 @@ def int_integral(psik):
     #print(I)    
     return I            
 #x = int_integral(1)
+
+
+
+
+
+
+
+def int_integral2(psik):
+    I = np.zeros(len(k), dtype=np.complex_)
+    #print(psik)
+    ### calculate the grid v_(i, j)
+    v_ij = np.zeros((len(k), len(k)))
+    for ii in range(len(k)):  # loop over outer k grid
+        for jj in range(len(k)):
+            if ii == jj:
+                v_ij[ii, jj] = None
+            else:
+                v_ij[ii, jj] = grid[1][jj] * k[jj] / k[ii] * np.log(np.abs(k[jj]+k[ii])/np.abs(k[jj]-k[ii])) # v_(i,j)
+                #v_ij[ii, jj] *= 4*k[ii]**4/(k[ii]**2 + k[jj]**2)**2   
+    #print(v_ij)         
+    ### calculate the modified grid w_(i, j)            
+    w_ij = np.zeros((len(k), len(k)))
+    for ii in range(len(k)):  # loop over outer k grid
+        for jj in range(len(k)):
+            if ii == jj:
+                #print(ii, jj)
+                #v_ij[ii, jj] = 0
+                A = 0
+                for mm in range(len(k)):
+                    if mm != jj:
+                        A += v_ij[ii, mm]*4*k[ii]**4/(k[ii]**2 + k[mm]**2)**2 
+                    
+                w_ij[ii, jj] = -A + np.pi*k[ii]    
+            else:
+                #print(ii, jj)
+                w_ij[ii, jj] = v_ij[ii, jj] #*4*k[ii]**4/(k[ii]**2 + k[mm]**2)**2 
+    #I = np.sum(w_ij*psik, axis=1)
+    #for ii in range(len(k)):   
+        #I[ii] = Integration.integrater.int_disc(psik[:], (k, w_ij[ii, :]))         
+        #I[ii] = np.sum(w_ij[ii, :]*psik[:]) # sum over j       
+    #print(I) 
+    #print(w_ij)
+    #print(A)
+    return I     
+
+
+
+
+def int_integral3(psik):
+    #print(psik)
+    ki = k.reshape((len(k), 1))
+    kj = k.reshape((1, len(k)))
+    integ = kj / ki * psik * np.log(np.abs(ki+kj)/np.abs(ki-kj+1e-12))
+    I = np.zeros(len(k), dtype=np.complex_)
+    for ii in range(len(k)):
+    #print(ii)
+        I[ii] = Integration.integrater.int_disc(integ[ii, :], grid)
+    return I

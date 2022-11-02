@@ -215,7 +215,7 @@ def allw_evo():
     
     
 def abs_over_w():
-    plt.figure() #dpi=300
+    plt.figure(dpi=300) #
     chi = polw / (Ew*C.eps0) 
     #plt.plot(w, chi.real, '-')
     plt.plot(w, chi.imag, '-')
