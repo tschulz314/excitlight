@@ -33,7 +33,7 @@ Phi = C.hbar*w0 - Eg
 # grids
 k0 = 0.
 k1 = 1.
-nk = 2000 #2000
+nk = 100 #2000
 
 
 # ODE conditions
@@ -42,6 +42,12 @@ t1          = 10
 nt          = 5000
 ntprint     = 100
 tres = nt/(t1-t0) # 1 Stützstelle per ps
+
+
+# fourier space
+#w0 = -40
+#w1 = 50
+#nw = 1000
 
 # general
 debug = True

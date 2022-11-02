@@ -24,78 +24,53 @@ st = time.time()
 
 ### initial conditions
 
-w = np.linspace(-100, 100, 2000)
+w = np.linspace(-40, 50, 1000)
 
 #grid = Integration.grids.equi(P.k0, P.k1, P.nk)
 grid = Integration.grids.gts2(P.k0, P.k1, P.nk)
 k = grid[0]
 
 
-
 ### calculte psi_k(w) (rotating frame)
 
-
-def psi_over_w():
+def psi_of_w():
     k_2D = k.reshape((1, len(k)))
     w_2D = w.reshape((len(w), 1))
-    E_bracket = C.hbar*w_2D + C.hbar**2*k_2D**2/(2*P.mu) - P.Phi - 1j*P.damp
-    psi = P.dipole * misc.E0w(w_2D) / E_bracket
-    return psi
-# psi = psi_over_w() 
+    E_bracket = - C.hbar*w_2D + C.hbar**2*k_2D**2/(2*P.mu) - P.Phi - 1j*P.damp
+    psiw = P.dipole * misc.E0w(w_2D) / E_bracket
+    np.savetxt("sol_w/momentum", k)
+    np.savetxt("sol_w/psiw", psiw.view(float)) 
+psi_of_w()    
  
-# plt.plot(w, psi[:,0].real)
-# plt.show()
-# plt.close()
-
 
 ### calculte psi_k(t) (rotating frame)
 
-def psi_over_t():
+def psi_of_t():
     t = np.linspace(P.t0, P.t1, 1000)
-    #t = np.linspace(0, 10, 1000)
-    psiw = psi_over_w() 
+    psiw = np.loadtxt("sol_w/psiw").view(complex)
     psit = np.zeros((len(t), len(k)), dtype=np.complex_)
     for ii in range(len(k)):    
-        t, psit[:, ii] = misc.fourier_trafo(w, psiw[:, ii], t[0], t[-1], len(t),
-                                            inverse=True)
+        psit[:, ii] = misc.fourier_trafo(w, psiw[:, ii], t, inverse=False)
     np.savetxt("sol_w/time", t)
-    np.savetxt("sol_w/momentum", k)
     np.savetxt("sol_w/psit", psit.view(float))    
-    return t, psit
-#t, psit = psi_over_t()
-
-
-# plt.plot(t, psit[:, -1])
-# plt.plot(k, psit[int(0), :].real)
-# plt.show()
-# plt.close()
+psi_of_t()
 
 
 ### calculate chi(w) (rotating frame)
 
-def chi_over_w():
+def chi_of_w():
     chiw = np.zeros(len(w), dtype=np.complex_)
-    #alpha = np.zeros(len(w))
     k_2D = k.reshape((1, len(k)))
     w_2D = w.reshape((len(w), 1))
     epsk = C.hbar**2 * k_2D**2 / (2*P.mu)
-    integrand = k_2D**2/(-C.hbar*w_2D + epsk + P.Eg - C.hbar*P.w0 -1j*P.damp)
-    #integrand2 = epsk/((C.hbar*w_2D + epsk + P.Eg - C.hbar*P.w0)**2  + P.damp**2)
+    integrand = k_2D**2/(- C.hbar*w_2D + epsk - P.Phi - 1j*P.damp)
     for ii in range(len(w)):
-        chiw[ii] = Integration.integrater.int_disc(integrand[ii, :], grid) 
-        #alpha[ii] = Integration.integrater.int_disc(integrand2[ii, :], grid)     
+        chiw[ii] = Integration.integrater.int_disc(integrand[ii, :], grid)   
     chiw *= np.abs(P.dipole)**2 / (2*np.pi**2)   
-    #alpha *= np.abs(P.dipole)**2 * np.sqrt(2*P.mu**3) / (np.pi**2*C.hbar**3) * P.damp
-    np.savetxt("sol_w/freq", w)
-    np.savetxt("sol_w/chi", chiw.view(float))  
-    return w, chiw     
+    np.savetxt("sol_w/frequency", w)
+    np.savetxt("sol_w/chi", chiw.view(float))     
+chi_of_w()
 
-w, chiw = chi_over_w()
-
-# plt.plot(w, chiw.imag)    
-# plt.plot(w, alpha)
-# plt.show()
-# plt.close()
 
 
 

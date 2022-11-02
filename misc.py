@@ -18,9 +18,16 @@ import Integration
 import constants as C
 import parameters as P
 
-### elecrtic field
+
+### find value in array
+
+def find_nearest(array, value):
+    array = np.asarray(array)
+    idx = (np.abs(array - value)).argmin()
+    return idx
 
 
+### elecrtic fields
 
 def E0(t):
     return P.E0 * np.exp(-1/2*((t-P.texp) / P.FWHM)**2) * 2*np.log(2)
@@ -30,45 +37,25 @@ def E(t):
     return E0(t) * np.exp(-1j*P.w0*t)
 
 
-def E0w(w):
-    return P.E0 * 2*np.log(2) * np.exp(-1/2*(w*P.FWHM)**2) * P.FWHM * np.exp(-1j*w*P.texp)
+def E0w(w): # t-> w: exp(iwt), i.e. inverse
+    return P.E0 * 2*np.log(2) * np.exp(-1/2*(w*P.FWHM)**2) * P.FWHM * np.exp(1j*w*P.texp)
 
 
+### fourier transform
 
-def fourier_trafo(x, fx, y0, y1, ny, inverse=False):
+def fourier_trafo(x, fx, y, inverse=False):
     f = interpolate.interp1d(x, fx)
-    #plt.plot(x, f(x))
-    #plt.show()
-    #plt.close()
-    y = np.linspace(y0, y1, ny)
-    gy = np.zeros(len(y), dtype=np.complex_)
     grid = Integration.grids.equi(x[0], x[-1], len(x))
     x = grid[0]
-    for ii in range(ny):
-        func = lambda xx: 1/np.sqrt(2*np.pi) * f(xx) * np.exp(-1j*y[ii]*xx) 
-        if inverse is True:
-            func = lambda x: 1/np.sqrt(2*np.pi) * f(x) * np.exp(1j*y[ii]*x) 
-        gy[ii] = Integration.integrater.int_disc(func(x), grid) 
-    #print(x[0], x[-1], len(x))    
-    return y, gy
-
-
-def fourier_trafo2(x, fx, y, inverse=False):
-    f = interpolate.interp1d(x, fx)
-    #plt.plot(x, f(x))
-    #plt.show()
-    #plt.close()
-    #y = np.linspace(y0, y1, ny)
     gy = np.zeros(len(y), dtype=np.complex_)
-    grid = Integration.grids.equi(x[0], x[-1], len(x))
-    x = grid[0]
     for ii in range(len(y)):
-        func = lambda xx: 1/np.sqrt(2*np.pi) * f(xx) * np.exp(-1j*y[ii]*xx) 
         if inverse is True:
             func = lambda x: 1/np.sqrt(2*np.pi) * f(x) * np.exp(1j*y[ii]*x) 
-        gy[ii] = Integration.integrater.int_disc(func(x), grid) 
-    #print(x[0], x[-1], len(x))    
-    return y, gy
+        else:
+            func = lambda x: 1/np.sqrt(2*np.pi) * f(x) * np.exp(-1j*y[ii]*x) 
+        gy[ii] = Integration.integrater.int_disc(func(x), grid)   
+    return gy
+
 
 ### test 1
 
@@ -111,20 +98,23 @@ def fourier_trafo2(x, fx, y, inverse=False):
 
 ###test 3
 
-#w0 = -100
-#w1 = 100
-#
-#t = np.linspace(P.t0, P.t1, P.nt)
-#w, gw = fourier_trafo(t, E0(t), w0, w1, P.nt) #, inverse=False)
-##gw = gw * np.exp(1j*w*texp)
-#plt.plot(t, E0(t))
-#plt.show()
-#plt.close()
-#plt.plot(w, gw.real)
-##plt.plot(w, gw.imag)
-#plt.plot(w, E0w(w).real, '--')
-##plt.plot(w, E0w(w).imag, '--')
-#plt.show()
+# w0 = -100
+# w1 = 100
+
+# t = np.linspace(P.t0, P.t1, P.nt)
+# w, gw = fourier_trafo(t, E0(t), w0, w1, P.nt, inverse=True)
+# #gw = gw * np.exp(1j*w*texp)
+# plt.plot(t, E0(t))
+# plt.show()
+# plt.close()
+# plt.plot(w, gw.real)
+# #plt.plot(w, gw.imag)
+# plt.plot(w, E0w(w).real, '--')
+# #plt.plot(w, E0w(w).imag, '--')
+# plt.show()
+
+
+
 
 
 

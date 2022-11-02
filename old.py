@@ -142,27 +142,16 @@ def int_grid(k, N):
 
 
 def int_integral(psik):
-    I = np.zeros(len(k), dtype=np.complex_)
-    # calculate the modified grid w_(i, j)
-    w_ij = np.zeros((len(k), len(k)))
-    for ii in range(len(k)):  # loop over outer k grid
-        v_ij = grid[1] * k / k[ii] * np.log(np.abs(k+k[ii])/np.abs(k-k[ii])) # v_(i,j)
-        v_im = v_ij * 4 * k[ii]**4 / (k[ii]**2+k**2)**2 # v_(i, m) in sum for i = j
-        vsum = np.sum(v_im)
-        for jj in range(len(k)):
-            if ii == jj:
-                w_ij[ii, jj] = -vsum + v_im[ii] + np.pi*k[ii]  
-            else:
-                w_ij[ii, jj] = v_ij[jj]
-        I[ii] = np.sum(w_ij[ii, :]*psik) # sum over j       
-    #print(I)    
-    return I            
-#x = int_integral(1)
-
-
-
-
-
+    ki = k.reshape((len(k), 1))
+    kj = k.reshape((1, len(k)))
+    v_ij = np.where(np.abs(ki-kj) > 0,
+                    grid[1] * kj  / ki * np.log(np.abs(ki+kj)/np.abs(ki-kj)), 0) 
+    v_im = v_ij * 4 * ki**4 / (ki**2+kj**2)**2
+    sum_i = np.sum(v_im, axis=1)
+    w_ij = np.where(np.abs(ki-kj) > 0, v_ij, -sum_i+np.pi*ki)
+    I = np.sum(w_ij*psik, axis=1)
+    #print(I.shape)                
+    return I 
 
 
 def int_integral2(psik):
@@ -194,7 +183,7 @@ def int_integral2(psik):
             else:
                 #print(ii, jj)
                 w_ij[ii, jj] = v_ij[ii, jj] #*4*k[ii]**4/(k[ii]**2 + k[mm]**2)**2 
-    #I = np.sum(w_ij*psik, axis=1)
+    I = np.sum(w_ij*psik, axis=1)
     #for ii in range(len(k)):   
         #I[ii] = Integration.integrater.int_disc(psik[:], (k, w_ij[ii, :]))         
         #I[ii] = np.sum(w_ij[ii, :]*psik[:]) # sum over j       
@@ -202,8 +191,6 @@ def int_integral2(psik):
     #print(w_ij)
     #print(A)
     return I     
-
-
 
 
 def int_integral3(psik):
@@ -216,3 +203,13 @@ def int_integral3(psik):
     #print(ii)
         I[ii] = Integration.integrater.int_disc(integ[ii, :], grid)
     return I
+
+
+#psi = np.exp(-10*k)  #np.ones(len(k)) 
+# #plt.plot(k, psi)
+#Ik1 = int_integral(psi)
+#Ik2 = int_integral2(psi)
+# Ik3 = int_integral3(psi)
+#plt.plot(k, Ik1)
+#plt.plot(k, Ik2.real, '--')
+# plt.plot(k, Ik3.real, '.')
