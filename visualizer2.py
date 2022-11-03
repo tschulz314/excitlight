@@ -9,7 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 import constants as C
-#import parameters as P
+import parameters as P
 import misc as misc
 
 
@@ -41,7 +41,7 @@ def comp_psi_of_k(tval):
     ax1.grid()
     ax2.grid()
     plt.show()
-comp_psi_of_k(1) 
+#comp_psi_of_k(1) 
 
 
 def comp_chi():
@@ -71,6 +71,7 @@ def comp_chi():
     plt.figure(dpi=300)
     plt.plot(w1, chiw1[:].imag)
     plt.plot(w2, chiw2[:].imag, '--')
+    plt.axvline(P.ryd_frq, color='grey')
     plt.xlabel(r"$\omega$ in ps$^{-1}$")
     plt.ylabel(r"$Im(\chi)$")
     plt.grid()

@@ -19,7 +19,8 @@ damp = C.hbar*1 # damping of the polaization
 
 
 # interraction 
-cI = 1 / (2*np.pi)**2 * C.e**2/(C.eps0 * eps) 
+cI_3D = 1 / (2*np.pi)**2 * C.e**2 / (C.eps0*eps) 
+cI_2D = 1 / (2*np.pi)**2 * C.e**2 / (C.eps0*eps*2) 
 
 
 # eletric field 
