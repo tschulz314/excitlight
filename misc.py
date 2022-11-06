@@ -19,6 +19,26 @@ import constants as C
 import parameters as P
 
 
+
+
+def k_int_grid(k, k0, k1, N):
+    a = k0
+    b = k
+    c = k1
+    ii = np.arange(0, N)
+    # Häufungspunkt am Ende
+    x1 = ( (ii+N+1)/(2*N+1) - 1 / ( 2 * np.pi ) * np.sin ( 2 * np.pi * (ii+N+1)/(2*N+1) ) ) * 2 * ( b-a ) + a - ( b-a )
+    v1 = ( 1 - np.cos( 2 * np.pi * (ii+N+1)/(2*N+1) ) ) * ( 2 * ( b-a )/(2*N+1) )
+    # Häufungspunkt am Anfang
+    x2 = ( (ii+1)/(2*N+1) - 1 / ( 2 * np.pi ) * np.sin ( 2 * np.pi * (ii+1)/(2*N+1) ) ) * 2 * ( c-b ) + b
+    v2 = ( 1 - np.cos( 2 * np.pi * (ii+1)/(2*N+1) ) ) * ( 2 * ( c-b )/(2*N+1) )
+    # Insgesamt 
+    x = np.concatenate((x1, x2))
+    v = np.concatenate((v1, v2))
+    #w = 
+    return x, v
+
+
 ### find value in array
 
 def find_nearest(array, value):

@@ -55,84 +55,70 @@ def int_grid_3D():
 
 
 def int_grid_2D():
-#    ### calucalte the double integral 
-#    double = np.zeros(len(k))
-#    nphi = 100
-#    phi_grid = Integration.grids.gts1(0, 2*np.pi, nphi)
-#    for ii in range(len(k)):
-#        k_integrand = np.zeros(len(k))
-#        for jj in range(len(k)):
-#            phi_integrand = k[jj]/np.sqrt(k[ii]**2 + k[jj]**2 - 2*k[ii]*k[jj]*np.cos(phi_grid[0])) 
-#            phi_integrand *= 4*k[ii]**4/(k[ii]**2 + k[jj]**2)**2
-#            k_integrand[jj] = np.sum(phi_grid[1]*phi_integrand)   
-#        double[ii] = np.sum(grid[1]*k_integrand)  
-#    
-#    ### calculate the remidning terms
-#    v_ij = np.zeros((len(k), len(k)))
-#    ki = k.reshape((len(k), 1))
-#    kj = k.reshape((1, len(k)))
-#    for ii in range(len(k)):
-#        for jj in range(len(k)):
-#            phi_integrand = k[jj]/(np.sqrt(k[ii]**2 + k[jj]**2 - 2*k[ii]*k[jj]*np.cos(phi_grid[0])))
-#            v_ij[ii, jj] = grid[1][jj]*Integration.integrater.int_disc(
-#                    phi_integrand, phi_grid)   
-#    v_im = v_ij * 4 * ki**4 / (ki**2+kj**2)**2
-#    sum_i = np.sum(v_im, axis=1)
-#    w_ij = np.where(np.abs(ki-kj) > 0, v_ij, -sum_i+double)
-    
-#    double = np.zeros(len(k))
-#    nphi = 100
-#    phi_grid = Integration.grids.gts1(0, 2*np.pi, nphi)
-#    for ii in range(len(k)):
-#        k_integrand = np.zeros(len(k))
-#        for jj in range(len(k)):
-#            phi_integrand = k[jj]/np.sqrt(k[ii]**2 + k[jj]**2 - 2*k[ii]*k[jj]*np.cos(phi_grid[0])) 
-#            phi_integrand *= 4*k[ii]**4/(k[ii]**2 + k[jj]**2)**2
-#            k_integrand[jj] = np.sum(phi_grid[1]*phi_integrand)   
-#        double[ii] = np.sum(grid[1]*k_integrand)  
-#    
-#    ### calculate the remidning terms
-#    v_ij = np.zeros((len(k), len(k)))
-#    ki = k.reshape((len(k), 1))
-#    kj = k.reshape((1, len(k)))
-#    for ii in range(len(k)):
-#        for jj in range(len(k)):
-#            if ii ==  jj:
-#                v_ij[ii, jj] = 0
-#            else:
-#                phi_integrand = k[jj]/(np.sqrt(k[ii]**2 + k[jj]**2 - 2*k[ii]*k[jj]*np.cos(phi_grid[0])))
-#                v_ij[ii, jj] = grid[1][jj]*Integration.integrater.int_disc(phi_integrand, phi_grid)   
-#    v_im = v_ij * 4 * ki**4 / (ki**2+kj**2)**2
-#    sum_i = np.sum(v_im, axis=1)
-#    w_ij = np.where(np.abs(ki-kj) > 0, v_ij, -sum_i+double)
-    
-    
+    ### calucalte the double integral 
     double = np.zeros(len(k))
-    nphi = 100
+    nkjj = 5000
+    nphi = 500
     phi_grid = Integration.grids.gts1(0, 2*np.pi, nphi)
     phi = phi_grid[0]
     for ii in range(len(k)):
-        phi_integrand = np.zeros(len(phi))
-        for ff in range(len(phi)):
-            k_integrand = lambda kjj: kjj/np.sqrt(k[ii]**2 + kjj**2 - 2*k[ii]*kjj*np.cos(phi[ff]))*4*k[ii]**4/(k[ii]**2 + kjj**2)**2
-            phi_integrand[ff] = integrate.quad(k_integrand, k[0], k[1])[0]
-        double[ii] = np.sum(phi_grid[1]*phi_integrand)         
-        
-    ### calculate the remidning terms
+        kjj_grid = misc.k_int_grid(k[ii], k[0], 10*k[-1], nkjj)
+        kjj = kjj_grid[0]
+        kjj_integrand = np.zeros(len(kjj))
+        for jj in range(len(kjj)):
+            sqrt = np.sqrt(k[ii]**2 + kjj[jj]**2 - 2*k[ii]*kjj[jj]*np.cos(phi)) 
+            phi_integrand = kjj[jj] / sqrt * 4 * k[ii]**4 / (k[ii]**2+kjj[jj]**2)**2
+            kjj_integrand[jj] = Integration.integrater.int_disc(phi_integrand, phi_grid)  
+        double[ii] = np.sum(kjj_grid[1]*kjj_integrand)
+    
     v_ij = np.zeros((len(k), len(k)))
     ki = k.reshape((len(k), 1))
     kj = k.reshape((1, len(k)))
     for ii in range(len(k)):
         for jj in range(len(k)):
-            if ii == jj:
+            if ii ==  jj:
                 v_ij[ii, jj] = 0
             else:
-                phi_integrand = k[jj]/(np.sqrt(k[ii]**2 + k[jj]**2 - 2*k[ii]*k[jj]*np.cos(phi_grid[0])))
+                sqrt = np.sqrt(k[ii]**2 + k[jj]**2 - 2*k[ii]*k[jj]*np.cos(phi))
+                phi_integrand = k[jj]/sqrt
                 v_ij[ii, jj] = grid[1][jj]*Integration.integrater.int_disc(phi_integrand, phi_grid)   
     v_im = v_ij * 4 * ki**4 / (ki**2+kj**2)**2
     sum_i = np.sum(v_im, axis=1)
-    w_ij = np.where(np.abs(ki-kj) > 0, v_ij, -sum_i+double)
+    w_ij = np.where(np.abs(ki-kj) > 0, v_ij, -sum_i+double)  
+    return w_ij
+
+
+def int_grid_eff(D):
+    ### calucalte the double integral 
+    double = np.zeros(len(k))
+    nkjj = 5000
+    nphi = 500
+    phi_grid = Integration.grids.gts1(0, 2*np.pi, nphi)
+    phi = phi_grid[0]
+    for ii in range(len(k)):
+        kjj_grid = misc.k_int_grid(k[ii], k[0], 5*k[-1], nkjj)
+        kjj = kjj_grid[0]
+        kjj_integrand = np.zeros(len(kjj))
+        for jj in range(len(kjj)):
+            sqrt = np.sqrt(k[ii]**2 + kjj[jj]**2 - 2*k[ii]*kjj[jj]*np.cos(phi)) 
+            phi_integrand = kjj[jj] / sqrt**D * 4 * k[ii]**4 / (k[ii]**2+kjj[jj]**2)**2
+            kjj_integrand[jj] = Integration.integrater.int_disc(phi_integrand, phi_grid)  
+        double[ii] = np.sum(kjj_grid[1]*kjj_integrand)
     
+    v_ij = np.zeros((len(k), len(k)))
+    ki = k.reshape((len(k), 1))
+    kj = k.reshape((1, len(k)))
+    for ii in range(len(k)):
+        for jj in range(len(k)):
+            if ii ==  jj:
+                v_ij[ii, jj] = 0
+            else:
+                sqrt = np.sqrt(k[ii]**2 + k[jj]**2 - 2*k[ii]*k[jj]*np.cos(phi))
+                phi_integrand = k[jj] / sqrt**D
+                v_ij[ii, jj] = grid[1][jj]*Integration.integrater.int_disc(phi_integrand, phi_grid)   
+    v_im = v_ij * 4 * ki**4 / (ki**2+kj**2)**2
+    sum_i = np.sum(v_im, axis=1)
+    w_ij = np.where(np.abs(ki-kj) > 0, v_ij, -sum_i+double)  
     return w_ij
 
 
@@ -144,144 +130,22 @@ def rhs(k, dim=3, coulomb=True):
         if dim == 2:
             w_ij = int_grid_2D()
             cI = P.cI_2D
+        else:
+            w_ij = int_grid_eff(1.2)
+            cI = P.cI_2D
     else:
         w_ij = np.zeros((len(k), len(k)))
+        cI = 0
         
     def ode(t, psik):
         Dpsik = (epsk - P.Phi - 1j*P.damp)*psik - P.dipole*misc.E0(t)
         Dpsik -= cI * np.sum(w_ij*psik, axis=1)
-#        if coulomb is True:
-#            if dim == 3:
-#                Dpsik -= P.cI_3D * int_integral_3D(psik)
-#            if dim == 2:
-#                Dpsik -= P.cI_2D * int_integral_2D3(psik)
         Dpsik  *= (-1j) / C.hbar 
         #print(t)
         return Dpsik
     return ode
 
 
-def int_integral_3D(psik):
-    ki = k.reshape((len(k), 1))
-    kj = k.reshape((1, len(k)))
-    np.seterr(divide='ignore')
-    v_ij = np.where(np.abs(ki-kj) > 0,
-                    grid[1] * kj / ki * (np.log(np.abs(ki+kj))-np.log(np.abs(ki-kj))), 0) 
-    np.seterr(divide='warn')
-    v_im = v_ij * 4 * ki**4 / (ki**2+kj**2)**2
-    sum_i = np.sum(v_im, axis=1)
-    w_ij = np.where(np.abs(ki-kj) > 0, v_ij, -sum_i+np.pi*ki)
-    I = np.sum(w_ij*psik, axis=1)
-    #print(I.shape)                
-    return I 
-
-
-def int_integral_2D2(psik):
-    f_psi = interpolate.interp1d(k, psik)
-    d_int = np.zeros(len(k))
-    for ii in range(len(k)):
-        f = lambda phi, kk: kk/np.sqrt(k[ii]**2 + kk**2 - 2*k[ii]*kk*np.cos(phi)+1e-3) * f_psi(kk)
-        d_int[ii] += integrate.dblquad(f, k[0], k[1], lambda x: 0, lambda x: 2*np.pi)[0] #np.arccos((k[ii]**2 + x**2)/(2*k[ii]*x))
-    return d_int
-
-
-def int_integral_2D4(psik):
-    nphi = 100
-    phi_grid = Integration.grids.gts1(0, 2*np.pi, nphi)
-    I = np.zeros(len(k))
-    for ii in range(len(k)):
-        k_integrand = np.zeros(len(k))
-        for jj in range(len(k)):
-            phi_integrand = k[jj]/np.sqrt(k[ii]**2 + k[jj]**2 - 2*k[ii]*k[jj]*np.cos(phi_grid[0])) 
-            k_integrand[jj] = np.sum(phi_grid[1]*phi_integrand) * psik[jj]   
-        I[ii] = np.sum(grid[1]*k_integrand) 
-    return I
-
-
-
-def int_integral_2D3(psik):
-    ### calucalte the double integral 
-    double = np.zeros(len(k))
-    nphi = 100
-    phi_grid = Integration.grids.gts1(0, 2*np.pi, nphi)
-    for ii in range(len(k)):
-        k_integrand = np.zeros(len(k))
-        for jj in range(len(k)):
-            phi_integrand = k[jj]/np.sqrt(k[ii]**2 + k[jj]**2 - 2*k[ii]*k[jj]*np.cos(phi_grid[0])) 
-            phi_integrand *= 4*k[ii]**4/(k[ii]**2 + k[jj]**2)**2
-            k_integrand[jj] = np.sum(phi_grid[1]*phi_integrand)   
-        double[ii] = np.sum(grid[1]*k_integrand)  
-    
-    ### calculate the remidning terms
-    v_ij = np.zeros((len(k), len(k)))
-    ki = k.reshape((len(k), 1))
-    kj = k.reshape((1, len(k)))
-    for ii in range(len(k)):
-        for jj in range(len(k)):
-#            if ii ==  jj:
-#                v_ij[ii, jj] = 0
-#            else:
-#                phi_integrand = k[jj]/(np.sqrt(k[ii]**2 + k[jj]**2 - 2*k[ii]*k[jj]*np.cos(phi_grid[0])))
-#                v_ij[ii, jj] = grid[1][jj]*Integration.integrater.int_disc(phi_integrand, phi_grid)   
-            phi_integrand = k[jj]/(np.sqrt(k[ii]**2 + k[jj]**2 - 2*k[ii]*k[jj]*np.cos(phi_grid[0])))
-            v_ij[ii, jj] = grid[1][jj]*Integration.integrater.int_disc(
-                    phi_integrand, phi_grid)   
-    v_im = v_ij * 4 * ki**4 / (ki**2+kj**2)**2
-    sum_i = np.sum(v_im, axis=1)
-    w_ij = np.where(np.abs(ki-kj) > 0, v_ij, -sum_i+double)
-    I = np.sum(w_ij*psik, axis=1)    
-    return I
-
-
-def int_integral_2D5(psik):
-    ### calucalte the double integral 
-    double = np.zeros(len(k))
-    nphi = 100
-    phi_grid = Integration.grids.gts1(0, 2*np.pi, nphi)
-    phi = phi_grid[0]
-    for ii in range(len(k)):
-        phi_integrand = np.zeros(len(phi))
-        for ff in range(len(phi)):
-            k_integrand = lambda kjj: kjj/np.sqrt(k[ii]**2 + kjj**2 - 2*k[ii]*kjj*np.cos(phi[ff]))*4*k[ii]**4/(k[ii]**2 + kjj**2)**2
-            phi_integrand[ff] = integrate.quad(k_integrand, k[0], k[1])[0]
-        double[ii] = np.sum(phi_grid[1]*phi_integrand)         
-        
-#        k_integrand = np.zeros(len(k))
-#        for jj in range(len(k)):
-#            phi_integrand = k[jj]/np.sqrt(k[ii]**2 + k[jj]**2 - 2*k[ii]*k[jj]*np.cos(phi_grid[0])) 
-#            phi_integrand *= 4*k[ii]**4/(k[ii]**2 + k[jj]**2)**2
-#            k_integrand[jj] = np.sum(phi_grid[1]*phi_integrand)   
-#        double[ii] = np.sum(grid[1]*k_integrand)  
-    
-    ### calculate the remidning terms
-    v_ij = np.zeros((len(k), len(k)))
-    ki = k.reshape((len(k), 1))
-    kj = k.reshape((1, len(k)))
-    for ii in range(len(k)):
-        for jj in range(len(k)):
-            if ii ==  jj:
-                v_ij[ii, jj] = 0
-            else:
-                phi_integrand = k[jj]/(np.sqrt(k[ii]**2 + k[jj]**2 - 2*k[ii]*k[jj]*np.cos(phi_grid[0])))
-                v_ij[ii, jj] = grid[1][jj]*Integration.integrater.int_disc(phi_integrand, phi_grid)   
-    v_im = v_ij * 4 * ki**4 / (ki**2+kj**2)**2
-    sum_i = np.sum(v_im, axis=1)
-    w_ij = np.where(np.abs(ki-kj) > 0, v_ij, -sum_i+double)
-    I = np.sum(w_ij*psik, axis=1)    
-    return I
-
-
-psi = np.exp(-10*k)
-plt.plot(k, psi)
-plt.show()
-plt.close()
-Ik = int_integral_2D5(psi)
-
-plt.plot(k, Ik)
-
-
-
-   
 def psi_of_t(dim=3, coulomb=True):
     method = ODE.solvers.RK4(rhs(k, dim, coulomb)) 
     t, sol = ODE.main.solve(method, P.t0, P.t1, P.nt, psik0)
@@ -292,7 +156,7 @@ def psi_of_t(dim=3, coulomb=True):
     np.savetxt("sol_t/momentum", k)
     np.savetxt("sol_t/sol", sol.view(float))
 #psi_of_t(dim=2, coulomb=True)
-#psi_of_t(coulomb=False)
+psi_of_t(dim=2.5, coulomb=True)
 
 
 
@@ -311,8 +175,7 @@ def pol_of_t(dim=3):
         pol[ii] = Integration.integrater.int_disc(
             integrand[ii, :], grid)
     np.savetxt("sol_t/polt", pol.view(float))
-#pol_of_t()
-#pol_of_t(dim=2)
+pol_of_t(dim=2)
 
 
 
@@ -326,7 +189,7 @@ def pol_of_w(): # t-> w: exp(iwt), i.e. inverse
     polw = misc.fourier_trafo(t, polt, w, inverse=True)
     np.savetxt("sol_t/frequency", w)    
     np.savetxt("sol_t/polw", polw.view(float)) 
-#pol_of_w()
+pol_of_w()
 
 
      

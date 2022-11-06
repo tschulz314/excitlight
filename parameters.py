@@ -33,14 +33,14 @@ Phi = C.hbar*w0 - Eg
 
 # grids
 k0 = 0.
-k1 = 1.
+k1 = 2
 nk = 100 #2000
 
 
 # ODE conditions
 t0          = 0.
 t1          = 10
-nt          = 5000
+nt          = 20000
 ntprint     = 100
 tres = nt/(t1-t0) # 1 Stützstelle per ps
 
