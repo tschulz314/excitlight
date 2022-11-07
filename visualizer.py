@@ -15,19 +15,24 @@ import misc as misc
 
 
 ### loading data 
-t = np.loadtxt("sol_t/time")
-k = np.loadtxt("sol_t/momentum")
-sol = np.loadtxt("sol_t/sol").view(complex) 
-polt = np.loadtxt("sol_t/polt").view(complex)
-w = np.loadtxt("sol_t/frequency")
-polw = np.loadtxt("sol_t/polw").view(complex)
-Ew = misc.E0w(w)
-
+def load_all():
+    t = np.loadtxt("sol_t/time")
+    k = np.loadtxt("sol_t/momentum")
+    sol = np.loadtxt("sol_t/sol").view(complex) 
+    polt = np.loadtxt("sol_t/polt").view(complex)
+    w = np.loadtxt("sol_t/frequency")
+    polw = np.loadtxt("sol_t/polw").view(complex)
+    Ew = misc.E0w(w)
+#load_all()
+    
 
 def psi_of_k():
     """
     Plot psi of k for various times t
     """
+    t = np.loadtxt("sol_t/time")
+    k = np.loadtxt("sol_t/momentum")
+    sol = np.loadtxt("sol_t/sol").view(complex) 
     T = len(t)-1
     #t_ind = [0, int(T/100), int(T/10), int(T/5), int(T/2), int(T)]
     t_ind = [int(T/100), int(T/10)]
@@ -49,6 +54,9 @@ def spicific_psik(ktoplot):
     """
     Plot psi of t for a specific k 
     """
+    t = np.loadtxt("sol_t/time")
+    k = np.loadtxt("sol_t/momentum")
+    sol = np.loadtxt("sol_t/sol").view(complex) 
     fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True, dpi=300) 
     plt.tight_layout()
     kind = misc.find_nearest(k, ktoplot)
@@ -74,6 +82,8 @@ def pol_of_t():
     """
     Plot Polaization P over time t
     """
+    t = np.loadtxt("sol_t/time")
+    polt = np.loadtxt("sol_t/polt").view(complex)
     fig, (ax1, ax2, ax3) = plt.subplots(3, 1, sharex=True, dpi=300) 
     ax1.plot(t, polt[:].real, '-')
     ax2.plot(t, polt[:].imag, '-')
@@ -98,6 +108,9 @@ def all_over_w():
     Plot Polaization P, electric Field E and the suszebility chi over
     frequency w
     """
+    w = np.loadtxt("sol_t/frequency")
+    polw = np.loadtxt("sol_t/polw").view(complex)
+    Ew = misc.E0w(w)
     fig, (ax1, ax2, ax3) = plt.subplots(3, 1, sharex=True, dpi=300) 
     #plt.tight_layout()
     chi = polw / (Ew*C.eps0)  
@@ -127,6 +140,9 @@ def abs_of_w():
     """
     Plot the absorption obver the frequency w
     """
+    w = np.loadtxt("sol_t/frequency")
+    polw = np.loadtxt("sol_t/polw").view(complex)
+    Ew = misc.E0w(w)
     plt.figure(dpi=300) 
     chi = polw / (Ew*C.eps0) 
     #plt.plot(w, chi.real, '-')
@@ -136,18 +152,36 @@ def abs_of_w():
     #ax2.set_xlim(-50, 50)
     #plt.ylim(0, 0.025)
     #plt.axvline(P.ryd_frq, color='grey')
-    plt.axvline(P.ryd_frq, color='grey')
-    plt.axvline(4*P.ryd_frq, color='green')
+    plt.axvline(P.ryd_frq, color='green', linewidth=1,
+                label=r'$\omega_{\mathrm{Ryd}}$')
+    plt.axvline(4*P.ryd_frq, color='red', linewidth=1,
+                label=r'$4\omega_{\mathrm{Ryd}}$')
     plt.ylabel(r"$Im(\chi)$")
-    #ax2.legend(loc="right") 
+    plt.legend(loc="right") 
     plt.grid()
     plt.show()
 abs_of_w()     
 
 
-# 1.5,  10k: -26.126126126126128, -26.306306306306308, -26.396396396396398
-# 3.5,  60k: -26.486486486486488, -26.576576576576578
-# 4.0,  80k: -26.486486486486488, -26.576576576576578 
-# 4.5, 100k: -26.576576576576578
-
+# 1.5,  10k: -26.30594880788261
+# 3.5,  60k: -26.532283227888374
+# 5.0, 120k: -26.56443677149896
+# 6.0, 160k: -26.58049667978786    
+# 8.0, 300k: -26.586654772040177
 # Lit: -26.600097478572224
+def convergence_2D():
+    kmax = [1.5, 3.5, 5., 6., 8.]
+    w = [-26.30594880788261, -26.532283227888374, -26.56443677149896,
+         -26.58049667978786, -26.586654772040177]
+    plt.figure(dpi=300)
+    plt.plot(kmax, w, 'x', label='numerical calculation')
+    plt.axhline(4*P.ryd_frq, color='red', linewidth=1,
+                label=r'$4\omega_{\mathrm{Ryd}}$')
+    plt.xlabel(r"$k$ in nm")
+    plt.ylabel(r"$\omega$ in ps$^{-1}$")
+    plt.legend()
+    plt.grid()
+    plt.show()
+#convergence_2D()
+
+

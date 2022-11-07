@@ -33,7 +33,7 @@ Phi = C.hbar*w0 - Eg
 
 # grids
 k0 = 0.
-k1 = 2
+k1 = 2.
 nk = 100 #2000
 
 

@@ -58,11 +58,11 @@ def int_grid_2D():
     ### calucalte the double integral 
     double = np.zeros(len(k))
     nkjj = 5000
-    nphi = 500
+    nphi = 1000
     phi_grid = Integration.grids.gts1(0, 2*np.pi, nphi)
     phi = phi_grid[0]
     for ii in range(len(k)):
-        kjj_grid = misc.k_int_grid(k[ii], k[0], 10*k[-1], nkjj)
+        kjj_grid = misc.k_int_grid(k[ii], k[0], 4*k[-1], nkjj)
         kjj = kjj_grid[0]
         kjj_integrand = np.zeros(len(kjj))
         for jj in range(len(kjj)):
@@ -88,20 +88,54 @@ def int_grid_2D():
     return w_ij
 
 
-def int_grid_eff(D):
+
+def TMDC_pot(q):
+    # def eps_tilde
+    eps_inf = 2
+    chi = 0.66  #####
+    eps_tilde = (1+eps_inf)/2 + chi/(2*C.eps0)*q *C.eps0*4*np.pi
+    #print((1+eps_inf)/2, chi/(2*C.eps0)*q)
+    
+    # def s²
+    n = 1e-5 # 10**16 cm**-3 
+    m = 0.4 * C.me
+    Omega_pl = np.sqrt(C.e**2 * n / (C.eps0 * eps_inf * m))
+    s = np.sqrt(eps_inf * Omega_pl**2 / 2)
+    
+    # def w_0,q
+    v = C.hbar**2 * q**2 / (2 * m)
+    kF = (3 * np.pi**2 * n)**(1/3)
+    kappa = np.sqrt(C.e**2 / (np.pi**2 * C.eps0 * eps_inf * C.hbar**2) * kF * m)
+    omega_0 = np.sqrt(Omega_pl**2*q**2/kappa**2 + v**2)
+    
+    # calculate W
+    V = C.e**2 / (2 * C.eps0 * q) 
+    eps_HS_inv = omega_0**2/(eps_tilde*omega_0**2  + s**2)
+    #eps_HS = eps_tilde + s**2/omega_0**2
+    #plt.figure(dpi=300, figsize=(3.5, 5))
+    #plt.plot(q, 1/eps_HS_inv)
+    #plt.plot(q, eps_HS, '-')
+    #plt.ylim(0, 300)
+    W = V * eps_HS_inv
+    #plt.plot(q, W)
+    return W
+#TMDC_pot(k)
+
+
+def int_grid_eff():
     ### calucalte the double integral 
     double = np.zeros(len(k))
-    nkjj = 5000
+    nkjj = 500
     nphi = 500
     phi_grid = Integration.grids.gts1(0, 2*np.pi, nphi)
     phi = phi_grid[0]
     for ii in range(len(k)):
-        kjj_grid = misc.k_int_grid(k[ii], k[0], 5*k[-1], nkjj)
+        kjj_grid = misc.k_int_grid(k[ii], P.k0, 3*P.k1, nkjj)
         kjj = kjj_grid[0]
         kjj_integrand = np.zeros(len(kjj))
         for jj in range(len(kjj)):
             sqrt = np.sqrt(k[ii]**2 + kjj[jj]**2 - 2*k[ii]*kjj[jj]*np.cos(phi)) 
-            phi_integrand = kjj[jj] / sqrt**D * 4 * k[ii]**4 / (k[ii]**2+kjj[jj]**2)**2
+            phi_integrand = kjj[jj] * TMDC_pot(sqrt) * 4 * k[ii]**4 / (k[ii]**2+kjj[jj]**2)**2
             kjj_integrand[jj] = Integration.integrater.int_disc(phi_integrand, phi_grid)  
         double[ii] = np.sum(kjj_grid[1]*kjj_integrand)
     
@@ -114,11 +148,12 @@ def int_grid_eff(D):
                 v_ij[ii, jj] = 0
             else:
                 sqrt = np.sqrt(k[ii]**2 + k[jj]**2 - 2*k[ii]*k[jj]*np.cos(phi))
-                phi_integrand = k[jj] / sqrt**D
+                phi_integrand = k[jj] * TMDC_pot(sqrt)
                 v_ij[ii, jj] = grid[1][jj]*Integration.integrater.int_disc(phi_integrand, phi_grid)   
     v_im = v_ij * 4 * ki**4 / (ki**2+kj**2)**2
     sum_i = np.sum(v_im, axis=1)
     w_ij = np.where(np.abs(ki-kj) > 0, v_ij, -sum_i+double)  
+    #print(w_ij)
     return w_ij
 
 
@@ -131,8 +166,9 @@ def rhs(k, dim=3, coulomb=True):
             w_ij = int_grid_2D()
             cI = P.cI_2D
         else:
-            w_ij = int_grid_eff(1.2)
-            cI = P.cI_2D
+            w_ij = int_grid_eff()
+            cI = 1 / (2*np.pi)**2 
+            #cI = 1 / (2*np.pi)**2* C.e**2 / (C.eps0*2) 
     else:
         w_ij = np.zeros((len(k), len(k)))
         cI = 0
@@ -156,7 +192,8 @@ def psi_of_t(dim=3, coulomb=True):
     np.savetxt("sol_t/momentum", k)
     np.savetxt("sol_t/sol", sol.view(float))
 #psi_of_t(dim=2, coulomb=True)
-psi_of_t(dim=2.5, coulomb=True)
+psi_of_t(dim='eff', coulomb=True)
+
 
 
 
@@ -185,7 +222,8 @@ pol_of_t(dim=2)
 def pol_of_w(): # t-> w: exp(iwt), i.e. inverse
     polt = np.loadtxt("sol_t/polt").view(complex)
     t = np.loadtxt("sol_t/time")
-    w = np.linspace(-40, 50, 1000)
+    #w = np.linspace(-40, 50, 2000)
+    w = Integration.grids.gts2(-40, 50, 1000)[0]
     polw = misc.fourier_trafo(t, polt, w, inverse=True)
     np.savetxt("sol_t/frequency", w)    
     np.savetxt("sol_t/polw", polw.view(float)) 

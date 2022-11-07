@@ -325,3 +325,36 @@ def int_integral_2D2(psik):
 # plt.plot(k, Ik)
 # plt.plot(k, Ik2, '--')
 
+
+
+#####################################################
+    
+
+
+def TMDC_pot(q):
+    omega = 1
+    gamma = P.damp
+    
+    # def eps_tilde
+    eps_inf = 1
+    chi = 1
+    eps_tilde = (1+eps_inf)/2 + chi/(2*C.eps0)*q
+    
+    # def s²
+    n = 1
+    m = 1
+    Omega_pl = np.sqrt(C.e**2 * n / (C.eps0 * eps_inf * m))
+    s_sq = eps_inf * Omega_pl**2 / 2
+    
+    # def w_0,q
+    v = C.hbar**2 * q**2 / (2 * m)
+    kF = (3 * np.pi**2 * n)**1/3
+    kappa = np.sqrt(C.e**2 / (np.pi**2 * C.eps0 * eps_inf * C.hbar**2) * kF * m)
+    omega_0 = Omega_pl**2*q**2/kappa**2 + v**2
+    
+    # calculate W
+    V = C.e**2 / (2 * C.eps0 * q) 
+    bracket = omega_0**2 - omega**2 - 1j*gamma*omega
+    eps_HS = (bracket)/(eps_tilde*bracket + s_sq)
+    W = V * eps_HS
+    return W
