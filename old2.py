@@ -358,3 +358,44 @@ def TMDC_pot(q):
     eps_HS = (bracket)/(eps_tilde*bracket + s_sq)
     W = V * eps_HS
     return W
+
+
+
+def TMDC_pot(q):
+    # def eps_tilde
+    eps_inf = 2
+    chi = 0.66  #####
+    #eps_tilde = (1+eps_inf)/2 + chi/(2*C.eps0)*q *C.eps0*4*np.pi
+    eps_up = eps_inf
+    eps_down = eps_inf
+    eps_tilde = (eps_up+eps_down)/2 + chi/(2*C.eps0)*q *C.eps0*4*np.pi
+    #print((1+eps_inf)/2, chi/(2*C.eps0)*q)
+    
+    # def s²
+    n = 1e-3 # 10**18 cm**-3 
+    m = 0.4 * C.me
+    Omega_pl = np.sqrt(C.e**2 * n / (C.eps0 * eps_inf * m))
+    s = np.sqrt(eps_inf * Omega_pl**2 / 2)
+    s = 0
+    # def w_0,q
+    v = C.hbar**2 * q**2 / (2 * m)
+    kF = (3 * np.pi**2 * n)**(1/3)
+    kappa = np.sqrt(C.e**2 / (np.pi**2 * C.eps0 * eps_inf * C.hbar**2) * kF * m)
+    omega_0 = np.sqrt(Omega_pl**2*q**2/kappa**2 + v**2)
+    
+    # calculate W
+    V = C.e**2 / (2 * C.eps0 * q) 
+    #V = 1 / q
+    eps_HS_inv = omega_0**2/(eps_tilde*omega_0**2  + s**2)
+    W = V * eps_HS_inv 
+    
+    #eps_HS = eps_tilde + s**2/omega_0**2
+    #plt.figure(dpi=300, figsize=(3.5, 5))
+    #plt.plot(q, 1/eps_HS_inv)
+    #plt.plot(q, eps_HS, '-')
+    #plt.ylim(0, 300)
+    #plt.plot(q, W)
+    #plt.plot(q, V, '-')
+    #plt.ylim(0, 40000)
+    return W
+#TMDC_pot(k)

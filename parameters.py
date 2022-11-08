@@ -27,7 +27,7 @@ cI_2D = 1 / (2*np.pi)**2 * C.e**2 / (C.eps0*eps*2)
 E0 = 1e-07  # field strength
 w0 = 2500 / C.hbar
 texp = 1
-FWHM = 0.05 #0.06
+FWHM = 0.01 #0.06 0.05
 Phi = C.hbar*w0 - Eg
 
 
@@ -41,7 +41,7 @@ nk = 100 #2000
 t0          = 0.
 t1          = 10
 nt          = 20000
-ntprint     = 100
+#ntprint     = 100
 tres = nt/(t1-t0) # 1 Stützstelle per ps
 
 

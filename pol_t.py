@@ -92,32 +92,17 @@ def int_grid_2D():
 def TMDC_pot(q):
     # def eps_tilde
     eps_inf = 2
-    chi = 0.66  #####
-    eps_tilde = (1+eps_inf)/2 + chi/(2*C.eps0)*q *C.eps0*4*np.pi
+    chi = 0.66  
+    eps_up = eps_inf
+    eps_down = eps_inf
+    eps_tilde = (eps_up+eps_down)/2 + chi/(2*C.eps0)*q*C.eps0*4*np.pi
     #print((1+eps_inf)/2, chi/(2*C.eps0)*q)
-    
-    # def s²
-    n = 1e-5 # 10**16 cm**-3 
-    m = 0.4 * C.me
-    Omega_pl = np.sqrt(C.e**2 * n / (C.eps0 * eps_inf * m))
-    s = np.sqrt(eps_inf * Omega_pl**2 / 2)
-    
-    # def w_0,q
-    v = C.hbar**2 * q**2 / (2 * m)
-    kF = (3 * np.pi**2 * n)**(1/3)
-    kappa = np.sqrt(C.e**2 / (np.pi**2 * C.eps0 * eps_inf * C.hbar**2) * kF * m)
-    omega_0 = np.sqrt(Omega_pl**2*q**2/kappa**2 + v**2)
     
     # calculate W
     V = C.e**2 / (2 * C.eps0 * q) 
-    eps_HS_inv = omega_0**2/(eps_tilde*omega_0**2  + s**2)
-    #eps_HS = eps_tilde + s**2/omega_0**2
-    #plt.figure(dpi=300, figsize=(3.5, 5))
-    #plt.plot(q, 1/eps_HS_inv)
-    #plt.plot(q, eps_HS, '-')
-    #plt.ylim(0, 300)
-    W = V * eps_HS_inv
-    #plt.plot(q, W)
+    eps_HS_inv = 1 / eps_tilde
+    W = V * eps_HS_inv 
+
     return W
 #TMDC_pot(k)
 
@@ -167,8 +152,11 @@ def rhs(k, dim=3, coulomb=True):
             cI = P.cI_2D
         else:
             w_ij = int_grid_eff()
+            #cI = 1 / (2*np.pi)**2 / P.eps
             cI = 1 / (2*np.pi)**2 
-            #cI = 1 / (2*np.pi)**2* C.e**2 / (C.eps0*2) 
+            #cI = 1 / (2*np.pi)**2 * C.e**2 / (C.eps0 * 2)
+            #cI = 1 / (2*np.pi)**2 * C.e**2 / (C.eps0 * P.eps * 2)
+            #print(cI)
     else:
         w_ij = np.zeros((len(k), len(k)))
         cI = 0
@@ -191,10 +179,6 @@ def psi_of_t(dim=3, coulomb=True):
     np.savetxt("sol_t/time", t)
     np.savetxt("sol_t/momentum", k)
     np.savetxt("sol_t/sol", sol.view(float))
-#psi_of_t(dim=2, coulomb=True)
-psi_of_t(dim='eff', coulomb=True)
-
-
 
 
 ### calculate P(t) (rotating frame)
@@ -212,9 +196,6 @@ def pol_of_t(dim=3):
         pol[ii] = Integration.integrater.int_disc(
             integrand[ii, :], grid)
     np.savetxt("sol_t/polt", pol.view(float))
-pol_of_t(dim=2)
-
-
 
 
 ### calculate P(w) (rotating frame)
@@ -223,15 +204,19 @@ def pol_of_w(): # t-> w: exp(iwt), i.e. inverse
     polt = np.loadtxt("sol_t/polt").view(complex)
     t = np.loadtxt("sol_t/time")
     #w = np.linspace(-40, 50, 2000)
-    w = Integration.grids.gts2(-40, 50, 1000)[0]
+    w = Integration.grids.gts2(-400, 50, 1000)[0]
     polw = misc.fourier_trafo(t, polt, w, inverse=True)
     np.savetxt("sol_t/frequency", w)    
     np.savetxt("sol_t/polw", polw.view(float)) 
+
+
+### execute programm 
+
+#psi_of_t(dim=2, coulomb=True)
+#psi_of_t(dim='eff', coulomb=True)
+#pol_of_t(dim=2)
 pol_of_w()
-
-
      
-
 
 
 
