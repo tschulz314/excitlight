@@ -147,15 +147,15 @@ def abs_of_w():
     chi = polw / (Ew*C.eps0) 
     #plt.plot(w, chi.real, '-')
     plt.plot(w, chi.imag, '-')
-    print(w[np.argmax(chi.imag)])
+    print(w[np.argmax(chi.imag)], C.hbar*w[np.argmax(chi.imag)])
     plt.xlabel(r"$\omega$ in ps$^{-1}$")
     #ax2.set_xlim(-50, 50)
     #plt.ylim(0, 0.025)
     #plt.axvline(P.ryd_frq, color='grey')
-    plt.axvline(P.ryd_frq, color='green', linewidth=1,
-                label=r'$\omega_{\mathrm{Ryd}}$')
-    plt.axvline(4*P.ryd_frq, color='red', linewidth=1,
-                label=r'$4\omega_{\mathrm{Ryd}}$')
+#    plt.axvline(P.ryd_frq, color='green', linewidth=1,
+#                label=r'$\omega_{\mathrm{Ryd}}$')
+#    plt.axvline(4*P.ryd_frq, color='red', linewidth=1,
+#                label=r'$4\omega_{\mathrm{Ryd}}$')
     plt.ylabel(r"$Im(\chi)$")
     plt.legend(loc="right") 
     plt.grid()

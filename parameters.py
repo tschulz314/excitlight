@@ -7,12 +7,14 @@ import numpy as np
 
 
 # material spicific
-me = 0.067 * C.me #0.067
-mh = 0.15 * C.me
+#me = 0.067 * C.me #0.067
+#mh = 0.15 * C.me
+me = 0.47 * C.me # MoS2
+mh = -0.54 * C.me # MoS2
+
 mu = 1/(1/me + 1/mh)
-#mu = C.me
+
 eps = 12  # dielectric constant
-#eps = 1
 dipole = 0.5 * C.e
 Eg = 2500 # gap energy
 damp = C.hbar*1 # damping of the polaization
@@ -27,7 +29,7 @@ cI_2D = 1 / (2*np.pi)**2 * C.e**2 / (C.eps0*eps*2)
 E0 = 1e-07  # field strength
 w0 = 2500 / C.hbar
 texp = 1
-FWHM = 0.01 #0.06 0.05
+FWHM = 0.005 # 0.05
 Phi = C.hbar*w0 - Eg
 
 
