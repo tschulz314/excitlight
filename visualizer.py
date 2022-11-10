@@ -148,19 +148,22 @@ def abs_of_w():
     #plt.plot(w, chi.real, '-')
     plt.plot(w, chi.imag, '-')
     print(w[np.argmax(chi.imag)], C.hbar*w[np.argmax(chi.imag)])
+
+    # plt.axvline(P.ryd_frq, color='green', linewidth=1,
+    #             label=r'$\omega_{\mathrm{Ryd}}$')
+    # plt.axvline(4*P.ryd_frq, color='red', linewidth=1,
+    #             label=r'$4\omega_{\mathrm{Ryd}}$')
+    # plt.axvline(4*P.ryd_frq_TMDC, color='red', linewidth=1,
+    #             label=r'$4\omega_{\mathrm{Ryd}}$')
+    # plt.legend(loc="right") 
     plt.xlabel(r"$\omega$ in ps$^{-1}$")
-    #ax2.set_xlim(-50, 50)
-    #plt.ylim(0, 0.025)
-    #plt.axvline(P.ryd_frq, color='grey')
-#    plt.axvline(P.ryd_frq, color='green', linewidth=1,
-#                label=r'$\omega_{\mathrm{Ryd}}$')
-#    plt.axvline(4*P.ryd_frq, color='red', linewidth=1,
-#                label=r'$4\omega_{\mathrm{Ryd}}$')
     plt.ylabel(r"$Im(\chi)$")
-    plt.legend(loc="right") 
+    #plt.yscale('log')
     plt.grid()
     plt.show()
 abs_of_w()     
+
+# w = 529.6166367969113, E = 348.6
 
 
 # 1.5,  10k: -26.30594880788261

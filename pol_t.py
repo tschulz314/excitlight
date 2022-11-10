@@ -57,7 +57,7 @@ def int_grid_3D():
 def int_grid_2D():
     ### calucalte the double integral 
     double = np.zeros(len(k))
-    nkjj = 5000
+    nkjj = 1000
     nphi = 1000
     phi_grid = Integration.grids.gts1(0, 2*np.pi, nphi)
     phi = phi_grid[0]
@@ -91,37 +91,46 @@ def int_grid_2D():
 
 def TMDC_pot(q):
     # def eps_tilde
-#    eps_inf =  2
-#    chi =   7.112#0.66  
-#    eps_up = eps_inf
-#    eps_down = eps_inf
-#    eps_tilde = (1+eps_down)/2 + 2*np.pi*chi*q   # chi/(2*C.eps0)*q*C.eps0*4*np.pi
-#    #print((eps_up+eps_down)/2)
-#    # calculate W
-    V = C.e**2 / (2 * C.eps0 * q) 
-#    eps_HS_inv = 1 / eps_tilde
-#    W = V * eps_HS_inv 
+    # eps_inf =  2
+    # chi =   7.112 * 0.1 #0.66  
+    # eps_up = eps_inf
+    # eps_down = eps_inf
+    # eps_tilde = (eps_up+eps_down)/2 + 2*np.pi*chi*q   # chi/(2*C.eps0)*q*C.eps0*4*np.pi
+    # V = C.e**2 / (2 * C.eps0 * q) 
+    # eps_HS_inv = 1 / eps_tilde
+    # W1 = V * eps_HS_inv 
 
-    d = 6.18
-    eps = 15.46
-    chi = d*(eps-1)/(4*np.pi)
+    #d = 6.18
+    #eps = 15.46
+    #chi = d*(eps-1)/(4*np.pi) * 0.1
     #print(chi)
-    r0 = 2 * np.pi * chi 
     
-    W = V * 1 / (2 + r0 * q)
-    return W
+    chi =   7.112 * 0.1 # 7.112 * e-10
+    kappa = 2 
+    r0 = 2 * np.pi * chi / kappa
+    V = C.e**2 / (2 * C.eps0 * q) 
+    W = V * 1 / kappa * 1 / (1 + r0 * q)
+    
+    # plt.plot(q, W)
+    # #plt.plot(q, W1, '--')
+    # plt.plot(q, V, '--')
+    # plt.ylim(0, 1e5)
+    # plt.show()
+    
+    return  W
+    #return  V / P.eps
 #TMDC_pot(k)
 
 
 def int_grid_eff():
     ### calucalte the double integral 
     double = np.zeros(len(k))
-    nkjj = 500
-    nphi = 500
+    nkjj = 1000
+    nphi = 1000
     phi_grid = Integration.grids.gts1(0, 2*np.pi, nphi)
     phi = phi_grid[0]
     for ii in range(len(k)):
-        kjj_grid = misc.k_int_grid(k[ii], P.k0, 3*P.k1, nkjj)
+        kjj_grid = misc.k_int_grid(k[ii], 0, 10, nkjj)
         kjj = kjj_grid[0]
         kjj_integrand = np.zeros(len(kjj))
         for jj in range(len(kjj)):
@@ -152,10 +161,10 @@ def rhs(k, dim=3, coulomb=True):
     if coulomb is True:
         if dim == 3:
             w_ij = int_grid_3D()
-            cI = P.cI_3D
+            cI = 1 / (2*np.pi)**2 * C.e**2 / (C.eps0*P.eps)   
         if dim == 2:
             w_ij = int_grid_2D()
-            cI = P.cI_2D
+            cI = 1 / (2*np.pi)**2 * C.e**2 / (C.eps0*P.eps*2) 
         else:
             w_ij = int_grid_eff()
             cI = 1 / (2*np.pi)**2 
@@ -206,7 +215,7 @@ def pol_of_w(): # t-> w: exp(iwt), i.e. inverse
     polt = np.loadtxt("sol_t/polt").view(complex)
     t = np.loadtxt("sol_t/time")
     #w = np.linspace(-40, 50, 2000)
-    w = Integration.grids.gts2(-600, 50, 1000)[0]
+    w = Integration.grids.gts2(-600, 50, 10000)[0]
     polw = misc.fourier_trafo(t, polt, w, inverse=True)
     np.savetxt("sol_t/frequency", w)    
     np.savetxt("sol_t/polw", polw.view(float)) 
