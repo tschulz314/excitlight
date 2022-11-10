@@ -125,8 +125,8 @@ def TMDC_pot(q):
 def int_grid_eff():
     ### calucalte the double integral 
     double = np.zeros(len(k))
-    nkjj = 1000
-    nphi = 1000
+    nkjj = 200
+    nphi = 200
     phi_grid = Integration.grids.gts1(0, 2*np.pi, nphi)
     phi = phi_grid[0]
     for ii in range(len(k)):
