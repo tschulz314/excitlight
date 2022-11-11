@@ -76,6 +76,28 @@ def comp_chi():
     plt.ylabel(r"$Im(\chi)$")
     plt.grid()
     plt.show()
-comp_chi()
+#comp_chi()
+
+def psi_of_k():
+    k = np.loadtxt("sol_eig/momentum")
+    w = np.loadtxt("sol_eig/frequency")
+    psiw = np.loadtxt("sol_eig/psi")
+    #print(w)
+    ### plot
+    plt.figure(dpi=300) 
+    plt.plot(k, psiw[:, 0], '-')
+    plt.xlabel(r"$k$ (nm$^{-1}$)")
+    plt.ylabel(r"$\psi_k$")
+    #plt.yscale('log')
+    plt.grid()
+    plt.show()
+    
+    
+    
+    
+    
+    
+    
+psi_of_k()    
 
   

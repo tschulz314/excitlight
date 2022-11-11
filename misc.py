@@ -79,32 +79,37 @@ def fourier_trafo(x, fx, y, inverse=False):
 
 ### test 1
 
-#x = np.linspace(-10, 10, 10000)
-#y, gy = fourier_trafo(x, 1/(x**2+1), -10, 10, 10000)
+#x = np.linspace(-10, 10, 50000)
+#y = np.linspace(-1000, 1000, 10000)
+#
+#gy = fourier_trafo(x, 1/(x**2+1), y)
 #plt.plot(y, gy.real)
 #plt.plot(y, np.pi*np.exp(-np.abs(y))*1/np.sqrt(2*np.pi), '--')
-#x2, fx2 = fourier_trafo(y, gy, -10, 10, 1000, inverse=True)
+#plt.show()
+#plt.close()
+#fx2 = fourier_trafo(y, gy, x, inverse=True)
 #plt.plot(x, 1/(x**2+1))
-#plt.plot(x2, fx2.real, '--')
+#plt.plot(x, fx2.real, '--')
 
 
 ### test 2
 
 #def gauss(t, texp, FWHM):
 #    return  np.exp(-1/2*((t-texp) / FWHM)**2) * 4 * np.log(2) * 1/2 # * 1 / np.sqrt(2*np.pi*P.FWHM**2) #P.E0 * P.E0 *
-
+#
 #t0 = 0
 #t1 = 5
 #nt = 1000
 #
 #texp = 1
 #FWHM = 0.06
-
+#
 #w0 = -1000
 #w1 = 1000
+#w = np.linspace(w0, w1, 1000)
 #
 #t = np.linspace(t0, t1, nt)
-#w, gw = fourier_trafo(t, gauss(t, texp, FWHM), w0, w1, nt) #, inverse=False)
+#w, gw = fourier_trafo(t, gauss(t, texp, FWHM), w) #, inverse=False)
 #gw = gw * np.exp(1j*w*texp)
 #plt.plot(t, gauss(t, texp, FWHM))
 #plt.show()
@@ -118,22 +123,38 @@ def fourier_trafo(x, fx, y, inverse=False):
 
 ###test 3
 
-# w0 = -100
-# w1 = 100
+#w0 = -100
+#w1 = 100
+#w = np.linspace(w0, w1, 1000)
+#
+#t = np.linspace(P.t0, P.t1, P.nt)
+#gw = fourier_trafo(t, E0(t), w, inverse=True)
+##gw = gw * np.exp(1j*w*texp)
+#plt.plot(t, E0(t))
+#plt.show()
+#plt.close()
+#plt.plot(w, gw.real)
+##plt.plot(w, gw.imag)
+#plt.plot(w, E0w(w).real, '--')
+##plt.plot(w, E0w(w).imag, '--')
+#plt.show()
 
-# t = np.linspace(P.t0, P.t1, P.nt)
-# w, gw = fourier_trafo(t, E0(t), w0, w1, P.nt, inverse=True)
-# #gw = gw * np.exp(1j*w*texp)
-# plt.plot(t, E0(t))
-# plt.show()
-# plt.close()
-# plt.plot(w, gw.real)
-# #plt.plot(w, gw.imag)
-# plt.plot(w, E0w(w).real, '--')
-# #plt.plot(w, E0w(w).imag, '--')
-# plt.show()
 
 
+def sort(a, b):
+    order = np.argsort(a)
+    a_new = a[order]
+    b_new = b[:, order]
+    return a_new, b_new
+
+#test = np.array([1, 3, 2, 4])
+#array = np.array([[1, 3, 2, 4], [5, 7, 6, 8]])
+#order = np.argsort(test)
+#
+#test2 = test[order]
+#array2 = array[:, order]
+#
+#test3, array3 = sort(test, array)
 
 
 

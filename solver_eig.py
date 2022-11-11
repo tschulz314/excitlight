@@ -33,13 +33,17 @@ def TMDC_pot(q):
     r0 = 2 * np.pi * chi / kappa
     V = C.e**2 / (2 * C.eps0 * q) 
     W = V * 1 / kappa * 1 / (1 + r0 * q)
-    return  W
+    return  W #V / P.eps
 #TMDC_pot(k)
+
+
+grid = Integration.grids.gts2(0, 5, 100)
+k = grid[0]
 
 
 def int_grid_eff():
     double = np.zeros(len(k))
-    nkjj = 200
+    nkjj = 1000
     nphi = 200
     phi_grid = Integration.grids.gts1(0, 2*np.pi, nphi)
     phi = phi_grid[0]
@@ -70,47 +74,55 @@ def int_grid_eff():
     return w_ij
 
 
-grid = Integration.grids.gts2(0, 5, 50)
-k = grid[0]
+def norm(psi):
+    psinew = np.zeros(psi.shape) # psi(k, w)
+    for ii in range(psi.shape[1]):    
+        norm = 1/(2*np.pi)**2 * np.sum(np.abs(psi[:, ii])**2*grid[1])
+        psinew[:, ii] = psi[:, ii] / np.sqrt(norm)
+        #print(norm)
+    return psinew    
+
 
 def eig():
-    eps = C.hbar**2 * k**2 / (2*P.mu) - P.Phi #-1j*P.damp
+    eps = C.hbar**2 * k**2 / (2 * P.mu) - P.Phi #-1j*P.damp
     w_ij = int_grid_eff()
     mat = np.diag(eps) - 1/(2*np.pi)**2*w_ij 
-    energy, psi = linalg.eigh(mat)
+    energy, psi = linalg.eig(mat) # energy[i], psi[k, i]
+    energy, psi = misc.sort(energy, psi)
+    psi = norm(psi)
     np.savetxt("sol_eig/momentum", k)
-    np.savetxt("sol_eig/omega", energy/C.hbar)
-    np.savetxt("sol_eig/psi", psi.view(float)) 
+    np.savetxt("sol_eig/frequency", energy.real/C.hbar)
+    np.savetxt("sol_eig/psi", psi)#.view(float))
     #return energy, psi
 eig()
 
 
+#w = np.loadtxt("sol_eig/frequency")
+#psi = np.loadtxt("sol_eig/psi")#.view(complex)
+#print(psi.shape)
 
-#plt.plot(energy, energy-energy, 'x')
-# ind = 10
-# print(energy[ind])
-# plt.plot(k, psi[:, ind])
+#psi2 = norm(psi)
+
+
+
+#print(w.shape)
+#nw = 20
+#w = w[:nw]
+#psi = psi[:, :nw]
+#w = np.sort(w)
+#print(w)
+
+#plt.plot(w, w-w, 'x')
+#plt.axvline(4*P.ryd_frq)
+#plt.xlim(-600, 50)
+#ind = 0
+#print(k.shape, psi[:, :].shape)
+#print(C.hbar * w[ind])
+#plt.plot(k, psi[:, ind].imag)
 #plt.xlim(0, 0.3)
 
 
 
-
-# w = energy / C.hbar
-# def chi_of_w():
-#     chiw = np.zeros(len(w), dtype=np.complex_)
-#     #integrand = 
-#     for ii in range(len(w)):
-#         chiw[ii] = Integration.integrater.int_disc(psi, grid) 
-#     k_2D = k.reshape((1, len(k)))
-#     w_2D = w.reshape((len(w), 1))
-#     epsk = C.hbar**2 * k_2D**2 / (2*P.mu)
-#     integrand = k_2D**2/(- C.hbar*w_2D + epsk - P.Phi - 1j*P.damp)
-#     for ii in range(len(w)):
-#         chiw[ii] = Integration.integrater.int_disc(integrand[ii, :], grid)   
-#     chiw *= np.abs(P.dipole)**2 / (2*np.pi**2)   
-#     np.savetxt("sol_w/frequency", w)
-#     np.savetxt("sol_w/chi", chiw.view(float))     
-# chi_of_w()
 
 
 

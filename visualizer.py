@@ -23,7 +23,8 @@ def load_all():
     w = np.loadtxt("sol_t/frequency")
     polw = np.loadtxt("sol_t/polw").view(complex)
     Ew = misc.E0w(w)
-#load_all()
+    return t, k, sol, polt, w, polw, Ew
+#t, k, sol, polt, w, polw, Ew = load_all()
     
 
 def psi_of_k():

@@ -187,6 +187,7 @@ def psi_of_t(dim=3, coulomb=True):
     #sol = sol*np.exp( -1j * P.w0*t.reshape((len(t), 1)) )
     #t = t[::2]
     #sol = sol[::2, :]
+    #print(sol.shape)
     np.savetxt("sol_t/time", t)
     np.savetxt("sol_t/momentum", k)
     np.savetxt("sol_t/sol", sol.view(float))
@@ -197,6 +198,7 @@ def psi_of_t(dim=3, coulomb=True):
 def pol_of_t(dim=3):
     t = np.loadtxt("sol_t/time")
     sol = np.loadtxt("sol_t/sol").view(complex)
+    #print(sol.shape)
     pol = np.zeros(len(t), dtype=np.complex_)
     if dim == 3:
         integrand = 1/(2*np.pi**2)*np.conjugate(P.dipole)*sol*k**2 #* np.exp(-1j*P.w0*t)
@@ -230,7 +232,17 @@ pol_of_w()
      
 
 
-
+### calculate the wavefunctions
+    
+#def psi_of_w(): # t-> w: exp(iwt), i.e. inverse
+#    polt = np.loadtxt("sol_t/polt").view(complex)
+#    t = np.loadtxt("sol_t/time")
+#    #w = np.linspace(-40, 50, 2000)
+#    w = Integration.grids.gts2(-600, 50, 10000)[0]
+#    polw = misc.fourier_trafo(t, polt, w, inverse=True)
+#    np.savetxt("sol_t/frequency", w)    
+#    np.savetxt("sol_t/polw", polw.view(float))     
+    
 
    
 
