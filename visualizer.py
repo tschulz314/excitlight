@@ -153,7 +153,7 @@ def abs_of_w():
     # plt.axvline(P.ryd_frq, color='green', linewidth=1,
     #             label=r'$\omega_{\mathrm{Ryd}}$')
     # plt.axvline(4*P.ryd_frq, color='red', linewidth=1,
-    #             label=r'$4\omega_{\mathrm{Ryd}}$')
+    #             label=r'$4\omega_{\mathrm{Ryd}}$')'
     # plt.axvline(4*P.ryd_frq_TMDC, color='red', linewidth=1,
     #             label=r'$4\omega_{\mathrm{Ryd}}$')
     # plt.legend(loc="right") 

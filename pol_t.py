@@ -22,6 +22,7 @@ import Integration
 import constants as C
 import parameters as P
 import misc as misc
+import interaction as inter
 
 import time
 st = time.time()
@@ -166,7 +167,7 @@ def rhs(k, dim=3, coulomb=True):
             w_ij = int_grid_2D()
             cI = 1 / (2*np.pi)**2 * C.e**2 / (C.eps0*P.eps*2) 
         else:
-            w_ij = int_grid_eff()
+            w_ij = inter.int_grid_eff(k, grid)
             cI = 1 / (2*np.pi)**2 
     else:
         w_ij = np.zeros((len(k), len(k)))
