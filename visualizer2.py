@@ -85,16 +85,21 @@ def psiw_of_k():
     #print(w)
     ### plot
     plt.figure(dpi=300) 
-    ind = 10
+    ind = 0
     plt.plot(k, psiw[:, ind], '-', label=r"$\omega={}$".format(w[ind]) ) # np.abs(psiw[:, ind])**2
+    plt.plot(k, psiw[:, ind+1], '-', label=r"$\omega={}$".format(w[ind+1]) ) 
+    plt.plot(k, psiw[:, ind+2], '-', label=r"$\omega={}$".format(w[ind+2]) )
+    #plt.plot(k, psiw[:, ind+3], '-', label=r"$\omega={}$".format(w[ind+3]) ) 
     plt.xlabel(r"$k$ (nm$^{-1}$)")
-    plt.ylabel(r"$\psi_k$")
+    plt.ylabel(r"$\tilde{\psi}_k$")
     plt.legend()
-    #plt.xlim(0, 5)
+    plt.xlim(0, 3)
     #plt.yscale('log')
     plt.grid()
+    plt.savefig('sol_eig/psik.png', format='png', dpi=300)
     plt.show()
-#psiw_of_k()   
+psiw_of_k()   
+
 
 def comp_abs_of_w():
     """
@@ -103,18 +108,20 @@ def comp_abs_of_w():
     w = np.loadtxt("sol_t/frequency")
     polw = np.loadtxt("sol_t/polw").view(complex)
     Ew = misc.E0w(w)
-    plt.figure(dpi=300) 
+    fig = plt.figure(dpi=300) 
     chi = polw / (Ew*C.eps0) 
     w2 = np.loadtxt("sol_eig/w")
     chi2 = np.loadtxt("sol_eig/chiw")
-    plt.plot(w, chi.imag, '-')
-    plt.plot(w2, chi2, '--') # linewidth=0.2)
-    plt.xlabel(r"$\omega$ in ps$^{-1}$")
-    plt.ylabel(r"$Im(\chi)$")
+    #plt.plot(w, chi.imag, '-')
+    plt.plot(w2, chi2, '-') # linewidth=0.2)
+    plt.xlabel(r"$\omega$ (ps$^{-1}$)")
+    #plt.ylabel(r"$Im(\chi)$")
+    plt.ylabel(r"$\alpha(\omega)$")
     #plt.yscale('log')
     #plt.ylim(0, 100)
     plt.grid()
-    plt.show()
+    fig.savefig('sol_eig/absorption.png', format='png', dpi=300)
+    plt.show()  
 comp_abs_of_w()    
 
   

@@ -167,7 +167,7 @@ def rhs(k, dim=3, coulomb=True):
             w_ij = int_grid_2D()
             cI = 1 / (2*np.pi)**2 * C.e**2 / (C.eps0*P.eps*2) 
         else:
-            w_ij = inter.int_grid_eff(k, grid)
+            w_ij = inter.int_grid_eff2(k, grid)
             cI = 1 / (2*np.pi)**2 
     else:
         w_ij = np.zeros((len(k), len(k)))
@@ -228,7 +228,7 @@ def pol_of_w(): # t-> w: exp(iwt), i.e. inverse
 
 #psi_of_t(dim=2, coulomb=True)
 psi_of_t(dim='eff', coulomb=True)
-pol_of_t(dim=2)
+#pol_of_t(dim=2)
 pol_of_w()
      
 

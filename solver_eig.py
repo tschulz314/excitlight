@@ -29,14 +29,14 @@ st = time.time()
 
 ### k grid
 
-grid = Integration.grids.gts2(0, 5, 200)
-k = grid[0]
+k, kgrid = Integration.grids.gts2(0, 4, 200) # 4, 30
+#k = grid[0]
 
 
 def norm(psi):
     psinew = np.zeros(psi.shape) # psi(k, w)
     for ii in range(psi.shape[1]):    
-        norm = 1/(2*np.pi) * np.sum(np.abs(psi[:, ii])**2*grid[1]*k)
+        norm = 1/(2*np.pi) * np.sum(np.abs(psi[:, ii])**2*kgrid*k)
         psinew[:, ii] = psi[:, ii] / np.sqrt(norm)
     #print(norm)
     return psinew    
@@ -44,17 +44,22 @@ def norm(psi):
 
 def eig():
     eps = C.hbar**2 * k**2 / (2 * P.mu) - P.Phi #-1j*P.damp
-    w_ij = inter.int_grid_eff(k, grid) #int_grid_eff()
+    w_ij = inter.int_grid_eff(k, kgrid) #int_grid_eff()
     mat = np.diag(eps) - 1/(2*np.pi)**2*w_ij 
     energy, psi = linalg.eig(mat) # energy[i], psi[k, i]
+    #print(psi[0, :])
+    #np.savetxt("sol_eig/psi_complex", psi.view(float))
+    #print(psi.imag)
+    #psi=psi.real
     energy, psi = misc.sort(energy, psi)
     psi = norm(psi)
     #psi = norm(psi)
     np.savetxt("sol_eig/momentum", k)
+    np.savetxt("sol_eig/momentum_weights", kgrid)
     np.savetxt("sol_eig/frequency", energy.real/C.hbar)
     np.savetxt("sol_eig/psi", psi)#.view(float))
     #return energy, psi
-#eig()
+eig()
 
 
 def chi():
@@ -63,7 +68,7 @@ def chi():
     ### calc psi(r=0)
     psi0 = np.zeros(len(w))
     for ii in range(len(w)):
-        psi0[ii] = 1/(2*np.pi) * np.sum(grid[1]*psi[:, ii]*k)
+        psi0[ii] = 1/(2*np.pi) * np.sum(kgrid*psi[:, ii]*k)
     ### calc chi      
     #print(len(w))
     nw = 5000
